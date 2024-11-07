@@ -118,5 +118,75 @@ posição é a coordenada
 
 ## Development
 
-Class Room
-Class RoomManager -> creates list of rooms
+### RoomManager
+
+- gets a hero instance at construction.
+- manages current room, next room, etc.
+- parses files to rooms
+
+### Room
+
+- initializes with floors
+- sets hero
+- sets tiles
+
+
+### Questions
+
+What class is responsible for movement collision?
+Makes sense that the room knows what elements it has so the room can say if the object is walkable. 
+
+I already can get the element that is at desired position, so the base of the collision logic is done. 
+getPosition - 
+
+The room defines if the is movable!
+
+I will have an enum of movables
+
+Hierarchy of classes? Does it make sense to add more methods? 
+If there are methods unique to all that I want them to share.
+
+Enemies: 
+They move randomly and attack.
+- BadGuy
+- Bat
+- Thief
+- Skeleton
+
+Inventory:
+arms.
+- Sword
+- Hammer
+- Trap
+
+Collect
+- Key
+- GoodMeat
+
+Power
+- Fire
+- FireOld
+
+Non-Moveables:
+- Wall
+- DoorClosed
+
+Moveables:
+- StairsUp
+- StairsDown
+- Grass
+- Floor
+- DoorOpen
+- DoorWay
+
+UI:
+- Red
+- Green
+- Black
+
+
+How does the hero keeps state between rooms?
+Makes sense to make the room manager receive the hero - it chooses the current room and the current room adds the hero to a certain position.
+
+Create other classes
+Methods need validation!!!
