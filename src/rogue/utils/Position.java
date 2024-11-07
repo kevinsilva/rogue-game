@@ -57,7 +57,7 @@ public class Position {
     }
 
     public Position plus(Vector2D vector2d) {
-        return null;
+        return new Position(this.getX() + vector2d.getX(), this.getY() + vector2d.getY());
     }
 
     @Override

@@ -21,7 +21,7 @@ public class Vector2D {
     }
 
     public Vector2D plus(Vector2D vector2d) {
-        return null;
+        return new Vector2D(this.getX() + vector2d.getX(), this.getY() + vector2d.getY());
     }
 
     public Vector2D minus(Vector2D vector2d) {
