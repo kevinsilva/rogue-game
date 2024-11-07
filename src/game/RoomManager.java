@@ -1,38 +1,82 @@
 package pt.upskill.projeto1.game;
 
+import pt.upskill.projeto1.objects.Floor;
+import pt.upskill.projeto1.objects.Hero;
 import pt.upskill.projeto1.objects.Room;
+import pt.upskill.projeto1.rogue.utils.Config;
+import pt.upskill.projeto1.rogue.utils.Position;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
 public class RoomManager {
-    private List<Room> rooms;
+    private List<Room> rooms = new ArrayList<>();
+    private Config config = new Config();
+    private Room currentRoom;
+    private Hero hero;
 
-    public RoomManager() {
-
+    public RoomManager(Hero hero) {
+        this.hero = hero;
+        addRooms();
+        if(!rooms.isEmpty()) currentRoom = rooms.getFirst();
     }
 
-    public void roomParser() {
-        final String FILEPATH = "rooms/room";
+    public void addRooms() {
+        String[] roomFiles = config.getROOM_FILES();
+        for (String roomFile : roomFiles) {
+            rooms.add(roomParser(roomFile));
+        }
+    }
+
+    public Room roomParser(String roomFile) {
+        Room room = new Room();
+        int y = 0;
         try {
-            // TODO: check all files inside folder and read
-            Scanner fileScanner = new Scanner(new File(FILEPATH + "0.txt"));
+            Scanner fileScanner = new Scanner(new File(config.getROOM_DIRECTORY() + roomFile));
             while(fileScanner.hasNextLine()) {
                 String line = fileScanner.nextLine();
                 String[] letters = line.split("");
 
-                for (String letter : letters) {
+                for (int x = 0; x < letters.length; x++) {
+                    String letter = letters[x];
+                    Position position = new Position(x, y);
                     System.out.println(letter);
                 }
             }
-
             fileScanner.close();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+        return room;
     }
 
+    private void addTileToRoom(Room room, char letter, Position position) {
+        switch (letter) {
+            default:
+                room.addTile(new Floor(position));
+                break;
+        }
+    }
 
+    public Room getCurrentRoom() {
+        return this.currentRoom;
+    }
 
+    public int getCurrentRoomIndex() {
+        return this.rooms.indexOf(this.getCurrentRoom());
+    }
+
+    public Room getRoom(int index) {
+        return this.rooms.get(index);
+    }
+
+    public Room getNextRoom() {
+        return this.rooms.get(this.getCurrentRoomIndex() + 1);
+    }
+
+    public Room getPreviousRoom() {
+        return this.rooms.get(this.getCurrentRoomIndex() - 1);
+    }
 }
