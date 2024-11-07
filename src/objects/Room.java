@@ -3,25 +3,48 @@ package pt.upskill.projeto1.objects;
 import pt.upskill.projeto1.gui.ImageTile;
 import pt.upskill.projeto1.rogue.utils.Position;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 
 public class Room {
-    private Hero hero;
-    private List<ImageTile> tiles;
+    private List<ImageTile> tiles = new ArrayList<>();
 
-    public Room(Hero hero) {
-        this.hero = hero;
+    public Room() {
         this.init();
     }
 
     public void init() {
-        for(int i=0; i<10; i++){
-            for(int j=0; j<10; j++){
-                tiles.add(new Floor(new Position(i, j)));
+        for(int y=0; y<10; y++){
+            for(int x=0; x<10; x++){
+                this.addTile(new Floor(new Position(x, y)));
             }
         }
-        tiles.add(this.hero);
     }
 
+    // Should be generic type?
+    public void addTile(ImageTile tile) {
+        this.tiles.add(tile);
+    }
 
+    public void addHero(Hero hero) {
+        tiles.add(hero);
+    }
+
+    public List<ImageTile> getTiles() {
+        return this.tiles;
+    }
+
+    public ImageTile getTileByPosition(int x, int y) {
+        ImageTile tileByPosition = null;
+
+        for(ImageTile tile : this.getTiles()) {
+            int tileX = tile.getPosition().getX();
+            int tileY = tile.getPosition().getY();
+            if(tileX == x && tileY == y) {
+                tileByPosition = tile;
+            }
+        }
+        return tileByPosition;
+    }
 }
