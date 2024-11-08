@@ -3,6 +3,7 @@ package pt.upskill.projeto1.game;
 import pt.upskill.projeto1.objects.Floor;
 import pt.upskill.projeto1.objects.Hero;
 import pt.upskill.projeto1.objects.Room;
+import pt.upskill.projeto1.objects.Wall;
 import pt.upskill.projeto1.rogue.utils.Config;
 import pt.upskill.projeto1.rogue.utils.Position;
 
@@ -26,11 +27,11 @@ public class RoomManager {
     public void addRooms() {
         String[] roomFiles = config.getROOM_FILES();
         for (String roomFile : roomFiles) {
-            rooms.add(roomParser(roomFile));
+            rooms.add(fileParser(roomFile));
         }
     }
 
-    public Room roomParser(String roomFile) {
+    public Room fileParser(String roomFile) {
         Room room = new Room();
         int y = 0;
         try {
@@ -42,18 +43,29 @@ public class RoomManager {
                 for (int x = 0; x < letters.length; x++) {
                     String letter = letters[x];
                     Position position = new Position(x, y);
-                    System.out.println(letter);
+                    //System.out.println(letter);
+                    this.addTileToRoom(room, letter, position);
                 }
+                y++;
             }
+
             fileScanner.close();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+
         return room;
     }
 
-    private void addTileToRoom(Room room, char letter, Position position) {
+    private void headingParser() {
+
+    }
+
+    private void addTileToRoom(Room room, String letter, Position position) {
         switch (letter) {
+            case "W":
+                room.addTile(new Wall(position));
+                break;
             default:
                 room.addTile(new Floor(position));
                 break;
@@ -68,15 +80,23 @@ public class RoomManager {
         return this.rooms.indexOf(this.getCurrentRoom());
     }
 
-    public Room getRoom(int index) {
+    public Room getRoomAtIndex(int index) {
         return this.rooms.get(index);
     }
 
     public Room getNextRoom() {
-        return this.rooms.get(this.getCurrentRoomIndex() + 1);
+        if(this.getCurrentRoomIndex() + 1 > config.getROOM_FILES().length - 1) return this.currentRoom;
+        Room nextRoom = this.rooms.get(this.getCurrentRoomIndex() + 1);
+        nextRoom.addHero(hero);
+        currentRoom = nextRoom;
+        return nextRoom;
     }
 
     public Room getPreviousRoom() {
-        return this.rooms.get(this.getCurrentRoomIndex() - 1);
+        if(this.getCurrentRoomIndex() - 1 < 0) return this.currentRoom;
+        Room previousRoom = this.rooms.get(this.getCurrentRoomIndex() - 1);
+        previousRoom.addHero(hero);
+        currentRoom = previousRoom;
+        return previousRoom;
     }
 }
