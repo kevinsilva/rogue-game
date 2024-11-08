@@ -5,7 +5,7 @@ import pt.upskill.projeto1.rogue.utils.Position;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Stream;
+import java.util.Objects;
 
 public class Room {
     private List<ImageTile> tiles = new ArrayList<>();
@@ -36,6 +36,7 @@ public class Room {
     }
 
     public ImageTile getTileByPosition(int x, int y) {
+        if(x < 0 || x > 9 && y < 0 || y > 9) return null;
         ImageTile tileByPosition = null;
 
         for(ImageTile tile : this.getTiles()) {
@@ -46,5 +47,14 @@ public class Room {
             }
         }
         return tileByPosition;
+    }
+
+    public boolean isTileMoveable(Position newPosition) {
+        boolean isMoveable = false;
+        ImageTile tile = getTileByPosition(newPosition.getX(), newPosition.getY());
+        if(tile == null) return false;
+
+        return !(tile instanceof Wall);
+        //return !Objects.equals(tile.getName(), "Wall");
     }
 }
