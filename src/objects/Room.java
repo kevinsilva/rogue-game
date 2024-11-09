@@ -4,11 +4,14 @@ import pt.upskill.projeto1.gui.ImageTile;
 import pt.upskill.projeto1.rogue.utils.Position;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 
 public class Room {
     private List<ImageTile> tiles = new ArrayList<>();
+    private HashMap<Integer, Door> doors = new HashMap<>();
+    private Key key;
 
     public Room() {
         this.init();
@@ -22,13 +25,28 @@ public class Room {
         }
     }
 
-    // Should be generic type?
     public void addTile(ImageTile tile) {
         this.tiles.add(tile);
     }
 
     public void addHero(Hero hero) {
         tiles.add(hero);
+    }
+
+    public void addDoor(int doorNumber, Door door) {
+        doors.put(doorNumber, door);
+    }
+
+    public Door getDoor(int doorNumber) {
+        return doors.get(doorNumber);
+    }
+
+    public void addKey(Key key) {
+        this.key = key;
+    }
+
+    public Key getKey() {
+        return key;
     }
 
     public List<ImageTile> getTiles() {
