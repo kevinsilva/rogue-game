@@ -1,13 +1,12 @@
 package pt.upskill.projeto1.objects;
 
+import pt.upskill.projeto1.game.RoomManager;
 import pt.upskill.projeto1.gui.ImageTile;
 import pt.upskill.projeto1.rogue.utils.Position;
 
-public class Wall implements ImageTile {
-    private Position position;
-
+public class Wall extends GameObject {
     public Wall(Position position) {
-        this.position = position;
+        super(position);
     }
 
     @Override
@@ -16,8 +15,11 @@ public class Wall implements ImageTile {
     }
 
     @Override
-    public Position getPosition() {
-        return position;
+    public void react(GameObject otherObject, RoomManager roomManager) {}
+
+    @Override
+    public boolean isWalkable() {
+        return false;
     }
 }
 

@@ -16,7 +16,7 @@ public class Engine {
     public void init(){
         rm.getCurrentRoom().addHero(hero);
         gui.setEngine(this);
-        gui.newImages(rm.getCurrentRoom().getTiles());
+        gui.newImages(rm.getCurrentRoom().getGameObjects());
         gui.go();
 
         gui.setStatus("O jogo começou!");
@@ -28,25 +28,27 @@ public class Engine {
 
     public void notify(int keyPressed){
         Hero hero = Hero.getInstance();
-        Position position = hero.getPosition();
+        Vector2D direction = null;
+
         if (keyPressed == KeyEvent.VK_DOWN){
-            Vector2D direction = Direction.DOWN.asVector();
-            if(rm.getCurrentRoom().isTileMoveable(position.plus(direction))) hero.move(direction);
+            direction = Direction.DOWN.asVector();
         }
         if (keyPressed == KeyEvent.VK_UP){
-            Vector2D direction = Direction.UP.asVector();
-            if(rm.getCurrentRoom().isTileMoveable(position.plus(direction))) hero.move(direction);
+            direction = Direction.UP.asVector();
         }
         if (keyPressed == KeyEvent.VK_LEFT){
-            Vector2D direction = Direction.LEFT.asVector();
-            if(rm.getCurrentRoom().isTileMoveable(position.plus(direction))) hero.move(direction);
+            direction = Direction.LEFT.asVector();
         }
         if (keyPressed == KeyEvent.VK_RIGHT){
-            Vector2D direction = Direction.RIGHT.asVector();
-            if(rm.getCurrentRoom().isTileMoveable(position.plus(direction))) hero.move(direction);
+            direction = Direction.RIGHT.asVector();
         }
-        if (keyPressed == KeyEvent.VK_M) gui.newImages(rm.getNextRoom().getTiles());
-        if (keyPressed == KeyEvent.VK_N) gui.newImages(rm.getPreviousRoom().getTiles());
+
+        if(direction != null) hero.move(direction, rm);
+
+        if (keyPressed == KeyEvent.VK_M) gui.newImages(rm.getNextRoom().getGameObjects());
+        if (keyPressed == KeyEvent.VK_N) gui.newImages(rm.getPreviousRoom().getGameObjects());
+
+
     }
 
     public static void main(String[] args){

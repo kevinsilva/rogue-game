@@ -1,5 +1,6 @@
 package pt.upskill.projeto1.game;
 
+import pt.upskill.projeto1.gui.ImageMatrixGUI;
 import pt.upskill.projeto1.objects.*;
 import pt.upskill.projeto1.rogue.utils.Constants;
 import pt.upskill.projeto1.rogue.utils.Position;
@@ -9,10 +10,11 @@ import java.util.List;
 import java.util.Scanner;
 
 public class RoomManager {
-    private Constants constants = new Constants();
+    private Constants CONSTANTS = new Constants();
     private List<Room> rooms = new ArrayList<>();
     private Room currentRoom;
     private Hero hero;
+    ImageMatrixGUI GUI = ImageMatrixGUI.getInstance();
 
     public RoomManager(Hero hero) {
         this.hero = hero;
@@ -21,7 +23,7 @@ public class RoomManager {
     }
 
     public void addRooms() {
-        String[] roomFiles = constants.getROOM_FILES();
+        String[] roomFiles = CONSTANTS.getROOM_FILES();
         for (String roomFile : roomFiles) {
             rooms.add(fileParser(roomFile));
         }
@@ -31,7 +33,7 @@ public class RoomManager {
         Room room = new Room();
         int y = 0;
         try {
-            Scanner fileScanner = new Scanner(new File(constants.getROOM_DIRECTORY() + roomFile));
+            Scanner fileScanner = new Scanner(new File(CONSTANTS.getROOM_DIRECTORY() + roomFile));
             while(fileScanner.hasNextLine()) {
                 String line = fileScanner.nextLine();
                 String[] letters = line.split("");
@@ -66,15 +68,14 @@ public class RoomManager {
         Door door;
         int doorNumber = Integer.parseInt(splitline[1]);
         String doorType = splitline[2];
-        String targetRoomFile = splitline[3];
+        int targetRoomIndex = this.getRoomIndexByFileName(splitline[3]);
         int targetDoorNumber = Integer.parseInt(splitline[4]);
         String keyId = splitline.length > 5 ? splitline[5] : null;
 
-        if(doorType.equalsIgnoreCase("e")) door = new DoorWay(null, targetRoomFile, targetDoorNumber);
-
+        if(doorType.equalsIgnoreCase("e")) door = new DoorWay(null, targetRoomIndex, targetDoorNumber);
         door = (keyId == null) ?
-                new DoorOpen(null, targetRoomFile, targetDoorNumber) :
-                new DoorClosed(null, targetRoomFile, targetDoorNumber, keyId);
+                new DoorOpen(null, targetRoomIndex, targetDoorNumber) :
+                new DoorClosed(null, targetRoomIndex, targetDoorNumber, keyId);
 
         room.addDoor(doorNumber, door);
     }
@@ -88,7 +89,7 @@ public class RoomManager {
     private void addTileToRoom(Room room, String letter, Position position) {
         switch (letter.toLowerCase()) {
             case "w":
-                room.addTile(new Wall(position));
+                room.addGameObject(new Wall(position));
                 break;
             case "0":
             case "1":
@@ -96,16 +97,16 @@ public class RoomManager {
                 Door door = room.getDoor(Integer.parseInt(letter));
                 if (door != null) {
                     door.setPosition(position);
-                    room.addTile(door);
+                    room.addGameObject(door);
                 }
                 break;
             case "k":
                 Key key = room.getKey();
                 key.setPosition(position);
-                room.addTile(key);
+                room.addGameObject(key);
                 break;
             default:
-                room.addTile(new Floor(position));
+                room.addGameObject(new Floor(position));
                 break;
         }
     }
@@ -114,18 +115,37 @@ public class RoomManager {
         return this.currentRoom;
     }
 
+    public void setCurrentRoom(Room currentRoom) {
+        this.currentRoom = currentRoom;
+        this.currentRoom.addHero(hero);
+        this.updateGUI();
+    }
+
     public int getCurrentRoomIndex() {
         return this.rooms.indexOf(this.getCurrentRoom());
     }
 
+    public int getRoomIndexByFileName(String roomFileName) {
+        String[] roomFiles = CONSTANTS.getROOM_FILES();
+
+        for(int i = 0; i < roomFiles.length; i++) {
+            if(roomFileName.equals(roomFiles[i])) return i;
+        }
+
+        throw new IllegalArgumentException("Room file not found: " + roomFileName);
+    }
+
     public Room getRoomAtIndex(int index) {
-        return this.rooms.get(index);
+        if (index >=0 && index < this.rooms.size()) {
+            this.setCurrentRoom(this.rooms.get(index));
+        }
+
+        return currentRoom;
     }
 
     public Room getNextRoom() {
         if(this.getCurrentRoomIndex() + 1 < this.rooms.size()) {
-            this.currentRoom =  this.rooms.get(this.getCurrentRoomIndex() + 1);
-            this.currentRoom.addHero(hero);
+            this.setCurrentRoom(this.rooms.get(this.getCurrentRoomIndex() + 1));
         }
 
        return this.currentRoom;
@@ -133,10 +153,13 @@ public class RoomManager {
 
     public Room getPreviousRoom() {
         if(this.getCurrentRoomIndex() - 1 >= 0) {
-            this.currentRoom = this.rooms.get(this.getCurrentRoomIndex() - 1);
-            this.currentRoom.addHero(hero);
+            this.setCurrentRoom(this.rooms.get(this.getCurrentRoomIndex() - 1));
         }
 
         return this.currentRoom;
+    }
+
+    public void updateGUI() {
+        this.GUI.newImages(this.currentRoom.getGameObjects());
     }
 }

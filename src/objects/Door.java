@@ -3,19 +3,19 @@ package pt.upskill.projeto1.objects;
 import pt.upskill.projeto1.rogue.utils.Position;
 
 public abstract class Door extends Obstacle {
-    private String targetRoomFile;
+    private int targetRoomIndex;
     private int targetDoorNumber;
     private String keyId;
 
-    public Door(Position position, String targetRoomFile, int targetDoorNumber, String keyId) {
+    public Door(Position position, int targetRoomIndex, int targetDoorNumber, String keyId) {
         super(position);
-        this.targetRoomFile = targetRoomFile;
+        this.targetRoomIndex = targetRoomIndex;
         this.targetDoorNumber = targetDoorNumber;
         this.keyId = keyId;
     }
 
-    public String getTargetRoomFile() {
-        return this.targetRoomFile;
+    public int getTargetRoomIndex() {
+        return this.targetRoomIndex;
     }
 
     public int getTargetDoorNumber() {

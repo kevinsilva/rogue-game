@@ -1,5 +1,6 @@
 package pt.upskill.projeto1.objects;
 
+import pt.upskill.projeto1.gui.ImageMatrixGUI;
 import pt.upskill.projeto1.gui.ImageTile;
 import pt.upskill.projeto1.rogue.utils.Position;
 
@@ -9,7 +10,7 @@ import java.util.List;
 import java.util.Objects;
 
 public class Room {
-    private List<ImageTile> tiles = new ArrayList<>();
+    private List<GameObject> gameObjects = new ArrayList<>();
     private HashMap<Integer, Door> doors = new HashMap<>();
     private Key key;
 
@@ -20,17 +21,17 @@ public class Room {
     public void init() {
         for(int y=0; y<10; y++){
             for(int x=0; x<10; x++){
-                this.addTile(new Floor(new Position(x, y)));
+                this.addGameObject(new Floor(new Position(x, y)));
             }
         }
     }
 
-    public void addTile(ImageTile tile) {
-        this.tiles.add(tile);
+    public void addGameObject(GameObject object) {
+        this.gameObjects.add(object);
     }
 
     public void addHero(Hero hero) {
-        tiles.add(hero);
+        gameObjects.add(hero);
     }
 
     public void addDoor(int doorNumber, Door door) {
@@ -49,30 +50,26 @@ public class Room {
         return key;
     }
 
-    public List<ImageTile> getTiles() {
-        return this.tiles;
+    public void removeGameObject(GameObject object) {
+        this.gameObjects.remove(object);
+        ImageMatrixGUI.getInstance().newImages(this.getGameObjects());
     }
 
-    public ImageTile getTileByPosition(int x, int y) {
-        if(x < 0 || x > 9 && y < 0 || y > 9) return null;
-        ImageTile tileByPosition = null;
+    public List<GameObject> getGameObjects() {
+        return this.gameObjects;
+    }
 
-        for(ImageTile tile : this.getTiles()) {
-            int tileX = tile.getPosition().getX();
-            int tileY = tile.getPosition().getY();
-            if(tileX == x && tileY == y) {
-                tileByPosition = tile;
+    public GameObject getGameObject(int x, int y) {
+        if(x < 0 || x > 9 && y < 0 || y > 9) return null;
+        GameObject gameObject = null;
+
+        for(GameObject object : this.getGameObjects()) {
+            int objectX = object.getPosition().getX();
+            int objectY = object.getPosition().getY();
+            if(objectX == x && objectY == y) {
+                gameObject = object;
             }
         }
-        return tileByPosition;
-    }
-
-    public boolean isTileMoveable(Position newPosition) {
-        boolean isMoveable = false;
-        ImageTile tile = getTileByPosition(newPosition.getX(), newPosition.getY());
-        if(tile == null) return false;
-
-        return !(tile instanceof Wall);
-        //return !Objects.equals(tile.getName(), "Wall");
+        return gameObject;
     }
 }
