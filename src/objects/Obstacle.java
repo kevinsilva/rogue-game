@@ -2,7 +2,7 @@ package pt.upskill.projeto1.objects;
 
 import pt.upskill.projeto1.rogue.utils.Position;
 
-public class Obstacle extends GameObject {
+public abstract class Obstacle extends GameObject {
     public Obstacle(Position position) {
         super(position);
     }
