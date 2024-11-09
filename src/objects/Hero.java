@@ -1,6 +1,6 @@
 package pt.upskill.projeto1.objects;
 
-import pt.upskill.projeto1.rogue.utils.Config;
+import pt.upskill.projeto1.rogue.utils.Constants;
 import pt.upskill.projeto1.rogue.utils.Position;
 import pt.upskill.projeto1.rogue.utils.Vector2D;
 
@@ -9,7 +9,7 @@ public class Hero extends GameObject   {
     private Position position;
 
     private Hero() {
-        super(new Config().getINITIAL_POSITION());
+        super(new Constants().getINITIAL_POSITION());
     }
 
     public static Hero getInstance() { return INSTANCE; }
