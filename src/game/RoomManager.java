@@ -10,20 +10,20 @@ import java.util.List;
 import java.util.Scanner;
 
 public class RoomManager {
-    private Constants CONSTANTS = new Constants();
+    private final Constants CONSTANTS = new Constants();
     private List<Room> rooms = new ArrayList<>();
     private Room currentRoom;
-    private Hero hero;
+    private final Hero hero;
     ImageMatrixGUI GUI = ImageMatrixGUI.getInstance();
 
     public RoomManager(Hero hero) {
         this.hero = hero;
-        addRooms();
+        loadRooms();
         if(!rooms.isEmpty()) currentRoom = rooms.getFirst();
     }
 
-    public void addRooms() {
-        String[] roomFiles = CONSTANTS.getROOM_FILES();
+    public void loadRooms() {
+        String[] roomFiles = CONSTANTS.getROOM_FILENAMES();
         for (String roomFile : roomFiles) {
             rooms.add(fileParser(roomFile));
         }
@@ -44,7 +44,7 @@ public class RoomManager {
                 };
 
                 for (int x = 0; x < letters.length; x++) {
-                    this.addTileToRoom(room, letters[x], new Position(x, y));
+                    this.addToRoom(room, letters[x], new Position(x, y));
                 }
                 y++;
             }
@@ -60,34 +60,52 @@ public class RoomManager {
     private void headerParser(String line, Room room) {
         String[] splitLine = line.split(" ");
         if (splitLine.length < 3) return;
-        if (splitLine.length == 3) keyInfoParser(splitLine, room);
-        else this.doorInfoParser(splitLine, room);
+
+        if (splitLine.length == 3) addKeyToRoom(splitLine, room);
+        else this.addDoorToRoom(splitLine, room);
     }
 
-    private void doorInfoParser(String[] splitline, Room room) {
-        Door door;
+    private void addDoorToRoom(String[] splitline, Room room) {
         int doorNumber = Integer.parseInt(splitline[1]);
         String doorType = splitline[2];
         int targetRoomIndex = this.getRoomIndexByFileName(splitline[3]);
         int targetDoorNumber = Integer.parseInt(splitline[4]);
         String keyId = splitline.length > 5 ? splitline[5] : null;
 
-        if(doorType.equalsIgnoreCase("e")) door = new DoorWay(null, targetRoomIndex, targetDoorNumber);
-        door = (keyId == null) ?
-                new DoorOpen(null, targetRoomIndex, targetDoorNumber) :
-                new DoorClosed(null, targetRoomIndex, targetDoorNumber, keyId);
 
+        Door door = createDoor(doorType, targetRoomIndex, targetDoorNumber, keyId);
         room.addDoor(doorNumber, door);
     }
 
-    private void keyInfoParser(String[] splitline, Room room) {
+    private Door createDoor(String doorType, int targetRoomIndex, int targetDoorNumber, String keyId) {
+        switch(doorType.toLowerCase()) {
+            case "e":
+                return new DoorWay(null, targetRoomIndex, targetDoorNumber);
+            case "d":
+                if(keyId == null) return new DoorOpen(null, targetRoomIndex, targetDoorNumber);
+                return new DoorClosed(null, targetRoomIndex, targetDoorNumber, keyId);
+            default:
+                return null;
+        }
+    }
+
+    private void addKeyToRoom(String[] splitline, Room room) {
         Key key = new Key(null, splitline[2]);
         room.addKey(key);
     }
 
 
-    private void addTileToRoom(Room room, String letter, Position position) {
+    private void addToRoom(Room room, String letter, Position position) {
         switch (letter.toLowerCase()) {
+            case "s":
+                room.addGameObject(new Sword(position));
+                break;
+            case "h":
+                room.addGameObject(new Hammer(position));
+                break;
+            case "m":
+                room.addGameObject(new GoodMeat(position));
+                break;
             case "w":
                 room.addGameObject(new Wall(position));
                 break;
@@ -126,7 +144,7 @@ public class RoomManager {
     }
 
     public int getRoomIndexByFileName(String roomFileName) {
-        String[] roomFiles = CONSTANTS.getROOM_FILES();
+        String[] roomFiles = CONSTANTS.getROOM_FILENAMES();
 
         for(int i = 0; i < roomFiles.length; i++) {
             if(roomFileName.equals(roomFiles[i])) return i;
