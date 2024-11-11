@@ -15,10 +15,6 @@ public class DoorClosed extends Door {
         this.isOpen = true;
     }
 
-    public void lock() {
-        this.isOpen = false;
-    }
-
     @Override
     public String getName() {
         return "DoorClosed";
@@ -39,7 +35,7 @@ public class DoorClosed extends Door {
                 Room nextRoom = roomManager.getRoomAtIndex(this.getTargetRoomIndex());
                 Door targetDoor = nextRoom.getDoor(this.getTargetDoorNumber());
 
-                if (targetDoor != null) otherObject.setPosition(targetDoor.getPosition());
+                if (targetDoor != null) hero.setPosition(targetDoor.getPosition());
             }
         }
     }

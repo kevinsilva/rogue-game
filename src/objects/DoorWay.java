@@ -1,5 +1,6 @@
 package pt.upskill.projeto1.objects;
 
+import pt.upskill.projeto1.game.RoomManager;
 import pt.upskill.projeto1.rogue.utils.Position;
 
 public class DoorWay extends Door {
@@ -15,5 +16,15 @@ public class DoorWay extends Door {
     @Override
     public boolean isWalkable() {
         return true;
+    }
+
+    @Override
+    public void react(GameObject otherObject, RoomManager roomManager) {
+        if(otherObject instanceof Hero) {
+            Room nextRoom = roomManager.getRoomAtIndex(this.getTargetRoomIndex());
+            Door targetDoor = nextRoom.getDoor(this.getTargetDoorNumber());
+
+            if (targetDoor != null) otherObject.setPosition(targetDoor.getPosition());
+        }
     }
 }
