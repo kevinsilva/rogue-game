@@ -30,6 +30,20 @@ public class Room {
         this.gameObjects.add(object);
     }
 
+    public void removeGameObjectAfterMs(GameObject object, int ms) {
+        try {
+        Thread.sleep(ms);
+        this.removeGameObject(object);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void giveBackGameObject(GameObject object) {
+        addGameObject(object);
+        ImageMatrixGUI.getInstance().newImages(this.getGameObjects());
+    }
+
     public void addHero(Hero hero) {
         gameObjects.add(hero);
     }
