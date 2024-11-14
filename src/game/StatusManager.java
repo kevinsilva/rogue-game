@@ -3,102 +3,82 @@ package pt.upskill.projeto1.game;
 import pt.upskill.projeto1.gui.ImageMatrixGUI;
 import pt.upskill.projeto1.gui.ImageTile;
 import pt.upskill.projeto1.objects.*;
+import pt.upskill.projeto1.rogue.utils.Constants;
 import pt.upskill.projeto1.rogue.utils.Position;
 
 import java.util.*;
 
 public class StatusManager {
     ImageMatrixGUI GUI = ImageMatrixGUI.getInstance();
-    private final int ITEMS_LENGTH = 3;
-    private final int HEALTH_LENGTH = 4;
-    private final int STATUS_BAR_LENGTH = 10;
-
+    Constants CONSTANTS = new Constants();
+    private HeroStatus heroStatus;
     List<ImageTile> statusBar = new ArrayList<>();
 
-    public StatusManager() {
-        this.loadBar();
+    public StatusManager(HeroStatus heroStatus) {
+        this.heroStatus = heroStatus;
+        this.updateStatusBar();
         this.loadInitialMessage();
     }
 
-    public void loadBar() {
+    public void updateStatusBar() {
+        clearStatusBar();
         addBarBackground();
         addFireballs();
         addHealth();
-        updateStatusBar();
+        addInventory();
+        GUI.newStatusImages(statusBar);
+    }
+
+    public void clearStatusBar() {
+        GUI.clearStatus();
+        statusBar.clear();
     }
 
     public void addBarBackground() {
-        for (int i = 0; i < STATUS_BAR_LENGTH; i++) {
+        for (int i = 0; i < CONSTANTS.getSTATUS_BAR_LENGTH(); i++) {
             statusBar.add(new Black(new Position(i, 0)));
         }
-        updateStatusBar();
+        GUI.newStatusImages(statusBar);
     }
 
     public void addFireballs() {
-        for (int i = 0; i < ITEMS_LENGTH; i++) {
-            statusBar.set(i, new Fire(new Position(i, 0)));
+        for (int i = 0; i < heroStatus.getFireballs(); i++) {
+            statusBar.set(i, new Fire(new Position(i, 0), null, null));
         }
     }
 
-    public void removeFireball() {
-        for (int i = ITEMS_LENGTH - 1; i >= 0; i--) {
-            ImageTile fireTile = statusBar.get(i);
-
-            if (fireTile instanceof Fire) {
-                statusBar.set(i, new Black(new Position(i, 0)));
-                break;
-            }
-        }
-        updateStatusBar();
-    }
 
     public void addHealth() {
-        for (int i = ITEMS_LENGTH; i < ITEMS_LENGTH + HEALTH_LENGTH; i++) {
-            statusBar.set(i, new Green(new Position(i, 0)));
-        }
-    }
+        int health = heroStatus.getHealth();
+        int healthStartIndex = CONSTANTS.getITEMS_LENGTH();
 
-    public void removeHealth() {
-        for (int i = ITEMS_LENGTH + HEALTH_LENGTH - 1; i >= ITEMS_LENGTH; i--) {
-            ImageTile healthTile = statusBar.get(i);
-
-            if (healthTile instanceof Green) {
-                statusBar.set(i, new Red(new Position(i, 0)));
-                break;
+        for (int i = 0; i < CONSTANTS.getHEALTH_LENGTH(); i++) {
+            int index = healthStartIndex + i;
+            if (health > 2 * i + 1) {
+                statusBar.set(index, new Green(new Position(index, 0)));
+            } else if (health == 2 * i + 1) {
+                statusBar.set(index, new GreenRed(new Position(index, 0)));
+            } else {
+                statusBar.set(index, new Red(new Position(index, 0)));
             }
         }
-
-        updateStatusBar();
     }
 
-    public void addItem(Item item) {
-        for (int i = ITEMS_LENGTH + HEALTH_LENGTH; i < STATUS_BAR_LENGTH; i++) {
-            item.setPosition(new Position(i, 0));
-            ImageTile itemTile = statusBar.get(i);
+    public void addInventory() {
+        List<Inventory> inventory = heroStatus.getInventory();
+        int inventoryStartIndex = CONSTANTS.getITEMS_LENGTH() + CONSTANTS.getHEALTH_LENGTH();
 
-            if (itemTile instanceof Black) {
-                statusBar.set(i, item);
-                break;
+        for (int i = 0; i < inventory.size(); i++) {
+            Inventory item = inventory.get(i);
+            int index = inventoryStartIndex + i;
+
+            if(index < CONSTANTS.getSTATUS_BAR_LENGTH() && !(item instanceof EmptyInventory)) {
+                item.setPosition(new Position(index, 0));
+                statusBar.set(index, item);
             }
         }
-        updateStatusBar();
     }
 
-    public void removeItem(Item item) {
-        for (int i = ITEMS_LENGTH + HEALTH_LENGTH; i < STATUS_BAR_LENGTH; i++) {
-            ImageTile itemTile = statusBar.get(i);
-
-            if (Objects.equals(itemTile.getName(), item.getName())) {
-                statusBar.set(i, new Black(new Position(i, 0)));
-                break;
-            }
-        }
-        updateStatusBar();
-    }
-
-    public void updateStatusBar() {
-        GUI.newStatusImages(statusBar);
-    }
 
     public void addMessage(String message) {
         GUI.setStatus(message);

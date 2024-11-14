@@ -3,13 +3,20 @@ package pt.upskill.projeto1.objects;
 import pt.upskill.projeto1.game.RoomManager;
 import pt.upskill.projeto1.game.StatusManager;
 import pt.upskill.projeto1.gui.FireTile;
+import pt.upskill.projeto1.rogue.utils.Direction;
 import pt.upskill.projeto1.rogue.utils.Position;
 
 public class Fire extends GameObject implements FireTile {
     RoomManager roomManager;
-    public Fire(Position position, RoomManager roomManager) {
+    Direction direction;
+    public Fire(Position position, Direction direction,RoomManager roomManager) {
         super(position);
         this.roomManager = roomManager;
+        this.direction = direction;
+    }
+
+    public Direction getDirection() {
+        return direction;
     }
 
     @Override
@@ -19,9 +26,8 @@ public class Fire extends GameObject implements FireTile {
 
     @Override
     public boolean validateImpact() {
-        int nextX = this.getPosition().getX() + 1;
-        int nextY = this.getPosition().getY();
-        GameObject otherObject = roomManager.getCurrentRoom().getGameObject(nextX, nextY);
+        Position nextPosition = this.getPosition().plus(this.getDirection().asVector());
+        GameObject otherObject = roomManager.getCurrentRoom().getGameObject(nextPosition);
 
         if (!(otherObject.isWalkable())) {
             FireOld fireold = new FireOld(this.getPosition());
@@ -29,7 +35,8 @@ public class Fire extends GameObject implements FireTile {
             roomManager.getCurrentRoom().removeGameObject(this);
             roomManager.getCurrentRoom().addGameObject(fireold);
             roomManager.updateGUI();
-            roomManager.getCurrentRoom().removeGameObjectAfterMs(fireold, 150);
+
+            roomManager.getCurrentRoom().removeGameObjectAfterMs(fireold, 250);
 
             return false;
         }

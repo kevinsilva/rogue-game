@@ -3,59 +3,60 @@ package pt.upskill.projeto1.game;
 import pt.upskill.projeto1.gui.ImageMatrixGUI;
 import pt.upskill.projeto1.objects.Hero;
 import pt.upskill.projeto1.rogue.utils.Direction;
-import pt.upskill.projeto1.rogue.utils.Vector2D;
 
 import java.awt.event.KeyEvent;
 
 public class Engine {
-    ImageMatrixGUI gui = ImageMatrixGUI.getInstance();
-    Hero hero = Hero.getInstance();
-    RoomManager rm = new RoomManager(hero);
-    StatusManager sm = new StatusManager(rm);
+    private final RoomManager roomManager;
+    private final StatusManager statusManager;
+    private final ImageMatrixGUI GUI;
+    private final Hero hero;
+    Direction previousDirection;
+
+    public Engine(RoomManager roomManager, StatusManager statusManager) {
+        this.roomManager = roomManager;
+        this.statusManager = statusManager;
+        this.GUI = ImageMatrixGUI.getInstance();
+        this.hero = Hero.getInstance();
+    }
 
     public void init(){
-        rm.getCurrentRoom().addHero(hero);
-        gui.setEngine(this);
-        gui.newImages(rm.getCurrentRoom().getGameObjects());
-        gui.go();
+        GUI.setEngine(this);
+        roomManager.updateGUI();
+        GUI.go();
 
         while (true){
-            gui.update();
+            GUI.update();
         }
     }
 
     public void notify(int keyPressed){
-        Hero hero = Hero.getInstance();
-        Vector2D direction = null;
+        Direction direction = null;
 
         if (keyPressed == KeyEvent.VK_DOWN){
-            direction = Direction.DOWN.asVector();
+            direction = Direction.DOWN;
+            previousDirection = Direction.DOWN;
         }
         if (keyPressed == KeyEvent.VK_UP){
-            direction = Direction.UP.asVector();
+            direction = Direction.UP;
+            previousDirection = Direction.UP;
         }
         if (keyPressed == KeyEvent.VK_LEFT){
-            direction = Direction.LEFT.asVector();
+            direction = Direction.LEFT;
+            previousDirection = Direction.LEFT;
         }
         if (keyPressed == KeyEvent.VK_RIGHT){
-            direction = Direction.RIGHT.asVector();
+            direction = Direction.RIGHT;
+            previousDirection = Direction.RIGHT;
         }
 
-        if(direction != null) hero.move(direction, rm, sm);
+        if(direction != null) hero.move(direction.asVector(), roomManager, statusManager);
 
-        if (keyPressed == KeyEvent.VK_M) gui.newImages(rm.getNextRoom().getGameObjects());
-        if (keyPressed == KeyEvent.VK_N) gui.newImages(rm.getPreviousRoom().getGameObjects());
-        if (keyPressed == KeyEvent.VK_E) sm.removeHealth();
-        if (keyPressed == KeyEvent.VK_F) sm.removeFireball();
-        if (keyPressed == KeyEvent.VK_SPACE) hero.throwFireball(rm, sm);
-        if (keyPressed == KeyEvent.VK_1) hero.removeItem(0, rm, sm);
-        if (keyPressed == KeyEvent.VK_2) hero.removeItem(1, rm, sm);
-        if (keyPressed == KeyEvent.VK_3) hero.removeItem(2, rm, sm);
+        if (keyPressed == KeyEvent.VK_M) GUI.newImages(roomManager.getNextRoom().getGameObjects());
+        if (keyPressed == KeyEvent.VK_N) GUI.newImages(roomManager.getPreviousRoom().getGameObjects());
+        if (keyPressed == KeyEvent.VK_SPACE) hero.throwFireball(previousDirection, roomManager, statusManager);
+        if (keyPressed == KeyEvent.VK_1) hero.removeItem(0, roomManager, statusManager);
+        if (keyPressed == KeyEvent.VK_2) hero.removeItem(1, roomManager, statusManager);
+        if (keyPressed == KeyEvent.VK_3) hero.removeItem(2, roomManager, statusManager);
     }
-
-    public static void main(String[] args){
-        Engine engine = new Engine();
-        engine.init();
-    }
-
 }

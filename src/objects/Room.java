@@ -1,5 +1,7 @@
 package pt.upskill.projeto1.objects;
 
+import pt.upskill.projeto1.game.RoomManager;
+import pt.upskill.projeto1.game.StatusManager;
 import pt.upskill.projeto1.gui.ImageMatrixGUI;
 import pt.upskill.projeto1.gui.ImageTile;
 import pt.upskill.projeto1.rogue.utils.Position;
@@ -32,7 +34,7 @@ public class Room {
 
     public void removeGameObjectAfterMs(GameObject object, int ms) {
         try {
-        Thread.sleep(ms);
+        Thread.currentThread().sleep(ms);
         this.removeGameObject(object);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
@@ -66,6 +68,7 @@ public class Room {
 
     public void removeGameObject(GameObject object) {
         this.gameObjects.remove(object);
+        ImageMatrixGUI.getInstance().removeImage(object);
         ImageMatrixGUI.getInstance().newImages(this.getGameObjects());
     }
 
@@ -73,17 +76,31 @@ public class Room {
         return this.gameObjects;
     }
 
-    public GameObject getGameObject(int x, int y) {
-        if(x < 0 || x > 9 && y < 0 || y > 9) return null;
+    public GameObject getGameObject(Position position) {
+        int x = position.getX();
+        int y = position.getY();
         GameObject gameObject = null;
 
-        for(GameObject object : this.getGameObjects()) {
+        if (x < 0 || x > 9 || y < 0 || y > 9) return null;
+
+
+        for (GameObject object : this.getGameObjects()) {
             int objectX = object.getPosition().getX();
             int objectY = object.getPosition().getY();
-            if(objectX == x && objectY == y) {
+            if (objectX == x && objectY == y) {
                 gameObject = object;
             }
         }
         return gameObject;
+    }
+
+    public Boolean isMoveValid(GameObject object, Position newPosition) {
+        GameObject targetObject = this.getGameObject(newPosition);
+        return targetObject != null && targetObject.isWalkable();
+    }
+
+    public void handleCollision(GameObject gameObject, GameObject otherObject, RoomManager roomManager, StatusManager statusManager) {
+        gameObject.react(otherObject, roomManager, statusManager);
+        otherObject.react(gameObject, roomManager, statusManager);
     }
 }

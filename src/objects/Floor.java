@@ -1,7 +1,7 @@
 package pt.upskill.projeto1.objects;
 
 import pt.upskill.projeto1.game.RoomManager;
-import pt.upskill.projeto1.gui.ImageTile;
+import pt.upskill.projeto1.game.StatusManager;
 import pt.upskill.projeto1.rogue.utils.Position;
 
 public class Floor extends GameObject {
@@ -15,7 +15,7 @@ public class Floor extends GameObject {
     }
 
     @Override
-    public void react(GameObject otherObject, RoomManager roomManager) {}
+    public void react(GameObject otherObject, RoomManager roomManager, StatusManager statusManager) {}
 
     @Override
     public boolean isWalkable() {

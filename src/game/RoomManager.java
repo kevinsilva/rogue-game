@@ -19,7 +19,10 @@ public class RoomManager {
     public RoomManager(Hero hero) {
         this.hero = hero;
         loadRooms();
-        if(!rooms.isEmpty()) currentRoom = rooms.getFirst();
+        if(!rooms.isEmpty()) {
+            currentRoom = rooms.getFirst();
+            currentRoom.addHero(hero);
+        }
     }
 
     public void loadRooms() {

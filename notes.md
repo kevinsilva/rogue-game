@@ -146,32 +146,27 @@ I will have an enum of movables
 Hierarchy of classes? Does it make sense to add more methods? 
 If there are methods unique to all that I want them to share.
 
-Enemies: 
+Enemy: 
 They move randomly and attack.
 - BadGuy
 - Bat
 - Thief
 - Skeleton
 
-Inventory:
-arms.
+Item
 - Sword
 - Hammer
 - Trap
-
-Collect
-- Key
-- GoodMeat
 
 Power
 - Fire
 - FireOld
 
-Non-Moveables:
+obstacle:
 - Wall
 - DoorClosed
 
-Moveables:
+Environment:
 - StairsUp
 - StairsDown
 - Grass
@@ -190,3 +185,62 @@ Makes sense to make the room manager receive the hero - it chooses the current r
 
 Create other classes
 Methods need validation!!!
+
+1 - ~~Abstract class GameObject implements ImageTile~~
+
+On hero: if tile is not null -> interact
+if is moveable -> setposition(newposition)
+
+interact() - if enemy take damage, else collect item
+
+2 - enemy, obstacle, item,
+
+3- enemy : if isnearhero(position, radius) movetowards(position) else moverandom
+
+4- hero: collectItem if < max inventory & applyeffect -> switch
+
+5- gamemanager this.score, getscore, updatescore, move, defeatenemy, collectitem
+gui, hero, roommanager, score,
+
+public void initGame() {
+try {
+roomManager.getCurrentRoom().addHero(hero);
+gui.setEngine(new Engine(this));
+gui.newImages(roomManager.getCurrentRoom().getTiles());
+gui.go();
+gui.setStatus("O jogo começou!");
+} catch (Exception e) {
+System.err.println("Error during game initialization: " + e.getMessage());
+e.printStackTrace();
+}
+}
+
+6- engine gamemanager gui , notify (gui update),
+
+7-room parser, if line starts with # parsespecial
+room.addDoorConfiguration(doorIndex, doorType, targetRoomFile, targetDoorIndex);
+8 - roommanager transition to door -> if room file name, getdoorposition, hero setposition
+
+9-  hero interact, if door is not locked or haskey -> transition to room
+
+10- key, haskeyid
+
+11- door - target room, target door, islocked, unlock
+
+### TODO
+- ~~add statusmanager and updates to pick objects~~
+- add properties on hero health, attack, etc
+- ~~add fireball~~
+- add enemies
+- think about game state score, saving state, loading state,
+- think about leaderboard
+- restructure status
+
+
+
+**not happy** 
+- same method on doorway and dooropen
+- Interface Object and Object structure
+- key per room
+- key on inventory???
+- review objects
