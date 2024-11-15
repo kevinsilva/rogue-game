@@ -17,7 +17,8 @@ public class Hero extends GameObject   {
     Constants CONSTANTS = new Constants();
     private static final Hero INSTANCE = new Hero();
     private HashMap<String, Item> keys = new HashMap<>();
-    private HeroStatus status = new HeroStatus(CONSTANTS.getINITIAL_HEALTH(), CONSTANTS.getINITIAL_FIREBALLS(), CONSTANTS.getINITIAL_INVENTORY());
+    private int health = CONSTANTS.getINITIAL_HEALTH();
+    private HeroStatus status = new HeroStatus(health, CONSTANTS.getINITIAL_FIREBALLS(), CONSTANTS.getINITIAL_INVENTORY());
     private Position lastPosition;
 
     private Hero() {
@@ -26,29 +27,42 @@ public class Hero extends GameObject   {
 
     public static Hero getInstance() { return INSTANCE; }
 
+    public void takeDamage(int damage) {
+        setHealth(getHealth() - damage);
+        status.setHealth(health);
 
-    public void move2(Vector2D vector2D, RoomManager roomManager, StatusManager statusManager) {
-        lastPosition = this.getPosition();
-        Position newPosition = this.getPosition().plus(vector2D);
-        Room currentRoom = roomManager.getCurrentRoom();
-
-        if (currentRoom.isMoveValid(this, newPosition)) {
-            super.setPosition(newPosition);
-            GameObject gameObject = currentRoom.getGameObject(newPosition);
-            if (gameObject != null) {
-                currentRoom.handleCollision(this, gameObject, roomManager, statusManager);
-            }
-        }
+        if(health <= 0) System.out.println("dead");
     }
 
-    public void move(Vector2D vector2D, RoomManager roomManager, StatusManager statusManager) {
-        lastPosition = this.getPosition();
-        Position newPosition = this.getPosition().plus(vector2D);
-        GameObject otherObject = roomManager.getCurrentRoom().getGameObject(newPosition);
-        Room currentRoom = roomManager.getCurrentRoom();
+    public int calculateTotalDamage() {
+        int swords = 0;
+        int hammers = 0;
 
-        if (currentRoom.isMoveValid(this, newPosition) && !(otherObject instanceof DoorClosed)) super.setPosition(newPosition);
-        if (otherObject != null) currentRoom.handleCollision(this, otherObject, roomManager, statusManager);
+        for (Inventory item : status.getInventory()) {
+            if (item instanceof Sword) swords++;
+            if (item instanceof Hammer) hammers++;
+        }
+
+        int swordDamage = CONSTANTS.getSWORD_DAMAGE() * swords;
+        int hammerDamage = CONSTANTS.getHAMMER_DAMAGE() * hammers;
+
+        return CONSTANTS.getUNARMED_DAMAGE() + swordDamage + hammerDamage;
+    }
+
+    public void attack(Enemy enemy) {
+        enemy.takeDamage(calculateTotalDamage());
+    }
+
+    public int getHealth() {
+        return health;
+    }
+
+    public void setHealth(int health) {
+        this.health = health;
+    }
+
+    public HeroStatus getStatus() {
+        return status;
     }
 
     public boolean hasKey(String keyName) {
@@ -105,9 +119,16 @@ public class Hero extends GameObject   {
         }
     }
 
-    public HeroStatus getStatus() {
-        return status;
+    public void move(Vector2D vector2D, RoomManager roomManager, StatusManager statusManager) {
+        lastPosition = this.getPosition();
+        Position newPosition = this.getPosition().plus(vector2D);
+        GameObject otherObject = roomManager.getCurrentRoom().getGameObject(newPosition);
+        Room currentRoom = roomManager.getCurrentRoom();
+
+        if (currentRoom.isMoveValid(this, newPosition) && !(otherObject instanceof DoorClosed)) super.setPosition(newPosition);
+        if (otherObject != null) currentRoom.handleCollision(this, otherObject, roomManager, statusManager);
     }
+
 
     @Override
     public String getName() {
@@ -125,6 +146,10 @@ public class Hero extends GameObject   {
         if (otherObject instanceof Inventory) {
             Inventory item = (Inventory) otherObject;
             addItem(item, roomManager, statusManager);
+        }
+
+        if (otherObject instanceof Enemy) {
+            Enemy enemy = (Enemy) otherObject;
         }
 
     }

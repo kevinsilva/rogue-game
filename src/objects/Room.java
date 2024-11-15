@@ -1,10 +1,12 @@
 package pt.upskill.projeto1.objects;
 
+import pt.upskill.projeto1.game.EnemyThread;
 import pt.upskill.projeto1.game.RoomManager;
 import pt.upskill.projeto1.game.StatusManager;
 import pt.upskill.projeto1.gui.ImageMatrixGUI;
 import pt.upskill.projeto1.gui.ImageTile;
 import pt.upskill.projeto1.rogue.utils.Position;
+import pt.upskill.projeto1.rogue.utils.Vector2D;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -13,7 +15,9 @@ import java.util.Objects;
 
 public class Room {
     private List<GameObject> gameObjects = new ArrayList<>();
+    private List<Enemy> enemies = new ArrayList<>();
     private HashMap<Integer, Door> doors = new HashMap<>();
+    private Hero hero;
     private Key key;
 
     public Room() {
@@ -47,7 +51,12 @@ public class Room {
     }
 
     public void addHero(Hero hero) {
+        this.hero = hero;
         gameObjects.add(hero);
+    }
+
+    public Hero getHero() {
+        return hero;
     }
 
     public void addDoor(int doorNumber, Door door) {
@@ -64,6 +73,42 @@ public class Room {
 
     public Key getKey() {
         return key;
+    }
+
+    public void addEnemy(Enemy enemy) {
+        enemies.add(enemy);
+    }
+
+    public void addEnemies() {
+        for(Enemy enemy : enemies) {
+            gameObjects.add(enemy);
+        }
+    }
+
+    public List<Enemy> getEnemies() {
+        return enemies;
+    }
+
+    public void moveEnemies() {
+        for (GameObject gameObject : gameObjects) {
+            if(gameObject instanceof Enemy) {
+                Enemy enemy = (Enemy) gameObject;
+                EnemyThread thread = new EnemyThread(enemy);
+
+                thread.start();
+            }
+        }
+    }
+
+    public void updateEnemies() {
+        for (GameObject gameObject : gameObjects) {
+            if(gameObject instanceof Enemy) {
+                Enemy enemy = (Enemy) gameObject;
+                EnemyThread enemyThread = new EnemyThread(enemy);
+
+                enemyThread.start();
+            }
+        }
     }
 
     public void removeGameObject(GameObject object) {

@@ -22,6 +22,8 @@ public class RoomManager {
         if(!rooms.isEmpty()) {
             currentRoom = rooms.getFirst();
             currentRoom.addHero(hero);
+            currentRoom.addEnemies();
+            currentRoom.moveEnemies();
         }
     }
 
@@ -99,7 +101,7 @@ public class RoomManager {
 
 
     private void addToRoom(Room room, String letter, Position position) {
-        switch (letter.toLowerCase()) {
+        switch (letter) {
             case "s":
                 room.addGameObject(new Sword(position));
                 break;
@@ -109,7 +111,7 @@ public class RoomManager {
             case "m":
                 room.addGameObject(new GoodMeat(position));
                 break;
-            case "w":
+            case "W":
                 room.addGameObject(new Wall(position));
                 break;
             case "0":
@@ -126,6 +128,18 @@ public class RoomManager {
                 key.setPosition(position);
                 room.addGameObject(key);
                 break;
+            case "S":
+                Skeleton skeleton = new Skeleton(position, room);
+                room.addEnemy(skeleton);
+                break;
+            case "B":
+                BadGuy badGuy = new BadGuy(position, room);
+                room.addEnemy(badGuy);
+                break;
+            case "T":
+                Thief thief = new Thief(position, room);
+                room.addEnemy(thief);
+                break;
             default:
                 room.addGameObject(new Floor(position));
                 break;
@@ -139,6 +153,8 @@ public class RoomManager {
     public void setCurrentRoom(Room currentRoom) {
         this.currentRoom = currentRoom;
         this.currentRoom.addHero(hero);
+        this.currentRoom.addEnemies();
+        this.currentRoom.moveEnemies();
         this.updateGUI();
     }
 

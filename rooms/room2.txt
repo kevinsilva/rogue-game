@@ -5,12 +5,12 @@
 # k key1
 #
 WWWWWWWWWW
-WS   G   W
+W    G   W
 W        W
 W  m  k  W
-W        W
+W T      W
 W      W W
-W    B WhW
+W      WhW
 W   WWWW W
 0   W    W
 WWWWW1WWWW

@@ -47,16 +47,16 @@ public class StatusManager {
         }
     }
 
-
     public void addHealth() {
         int health = heroStatus.getHealth();
+        int scaledHealth = (int) Math.round((double) health / (CONSTANTS.getINITIAL_HEALTH() / CONSTANTS.getHEALTH_SCALE()));
         int healthStartIndex = CONSTANTS.getITEMS_LENGTH();
 
         for (int i = 0; i < CONSTANTS.getHEALTH_LENGTH(); i++) {
             int index = healthStartIndex + i;
-            if (health > 2 * i + 1) {
+            if (scaledHealth > 2 * i + 1) {
                 statusBar.set(index, new Green(new Position(index, 0)));
-            } else if (health == 2 * i + 1) {
+            } else if (scaledHealth == 2 * i + 1) {
                 statusBar.set(index, new GreenRed(new Position(index, 0)));
             } else {
                 statusBar.set(index, new Red(new Position(index, 0)));

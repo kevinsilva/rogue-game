@@ -50,7 +50,10 @@ public class Engine {
             previousDirection = Direction.RIGHT;
         }
 
-        if(direction != null) hero.move(direction.asVector(), roomManager, statusManager);
+        if(direction != null) {
+            hero.move(direction.asVector(), roomManager, statusManager);
+            //roomManager.getCurrentRoom().moveEnemies();
+        };
 
         if (keyPressed == KeyEvent.VK_M) GUI.newImages(roomManager.getNextRoom().getGameObjects());
         if (keyPressed == KeyEvent.VK_N) GUI.newImages(roomManager.getPreviousRoom().getGameObjects());
