@@ -250,9 +250,9 @@ SOLVE:
 - ~~enemies disappear~~
 - prevent multiple enemies from pile: create set with reserved positions.
 if reserved containes new position -> setposition. At the end clearall reservations.
-- thief: steal: hero.gettatus.getinventory.clear
+- ~~thief: steal: hero.gettatus.getinventory.clear~~
 - ~~diagonal: add enums direction: upleft, upright etc~~
-- add set trap method on hero. then react trap to activate trap on enemy
+- ~~add set trap method on hero. then react trap to activate trap on enemy~~
 - ~~enemy thread, use room to initiate~~
 - score: defeat enemy, collect item, moves, update score
 - Save Method: Writes the hero's position, health, inventory, current room index, enemies' positions, and score to a file.
@@ -263,4 +263,12 @@ if reserved containes new position -> setposition. At the end clearall reservati
 !!fireball on doors
 !!enemies on doors
 !!room initiation vs setcurrentroom -> refactor
-!!refactor enemy move
+
+~~enemies are not recognized by trap.!!~~
+
+- what to save?
+- hero position, health, inventory
+- enemies health and position
+- score
+- objects
+- save all rooms data?

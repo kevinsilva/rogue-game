@@ -1,85 +1,46 @@
 package pt.upskill.projeto1.rogue.utils;
 
-import pt.upskill.projeto1.objects.EmptyInventory;
-import pt.upskill.projeto1.objects.Inventory;
+import pt.upskill.projeto1.objects.items.EmptyInventory;
+import pt.upskill.projeto1.objects.items.Inventory;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class Constants {
-    final private String[] ROOM_FILENAMES = {"room0.txt", "room1.txt", "room2.txt"};
-    final private Position INITIAL_POSITION = new Position(4, 0);
+    // Saves Constants
+    public static final String SAVES_FILEPATH = "saves/save.dat";
 
-    public int getINITIAL_FIREBALLS() {
-        int INITIAL_FIREBALLS = 3;
-        return INITIAL_FIREBALLS;
-    }
+    // Room Constants
+    public static final String[] ROOM_FILENAMES = {"room0.txt", "room1.txt", "room2.txt"};
+    public static final String ROOM_DIRECTORY = "rooms/";
+    public static final Position INITIAL_POSITION = new Position(4, 0);
 
-    public int getINITIAL_HEALTH() {
-        int INITIAL_HEALTH = 100;
-        return INITIAL_HEALTH;
-    }
+    // Player Constants
+    public static final int INITIAL_FIREBALLS = 3;
+    public static final int INITIAL_HEALTH = 100;
+    public static final int STATUS_BAR_LENGTH = 10;
 
-    public int getHEALTH_SCALE() {
-        int HEALTH_SCALE = 8;
-        return HEALTH_SCALE;
-    }
+    // Inventory Constants
+    public static final int ITEMS_LENGTH = 3;
+    public static final List<Inventory> INITIAL_INVENTORY = createInitialInventory();
 
-    public List<Inventory> getINITIAL_INVENTORY() {
-        return new ArrayList<>(){
-            {
-                add(new EmptyInventory(null));
-                add(new EmptyInventory(null));
-                add(new EmptyInventory(null));
-            }
-        };
-    }
+    // Combat Constants
+    public static final int UNARMED_DAMAGE = 5;
+    public static final int SWORD_DAMAGE = 10;
+    public static final int HAMMER_DAMAGE = 15;
 
-    public int getUNARMED_DAMAGE() {
-        int UNARMED_DAMAGE = 5;
-        return UNARMED_DAMAGE;
-    }
+    // Health Constants
+    public static final int HEALTH_LENGTH = 4;
+    public static final int HEALTH_SCALE = 8;
 
-    public int getSWORD_DAMAGE() {
-        int SWORD_DAMAGE = 10;
-        return SWORD_DAMAGE;
-    }
+    //Enemy Constants
+    public static final int ENEMY_ALERT_RANGE = 2;
 
-    public int getHAMMER_DAMAGE() {
-        int HAMMER_DAMAGE = 15;
-        return HAMMER_DAMAGE;
-    }
-
-    public int getITEMS_LENGTH() {
-        int ITEMS_LENGTH = 3;
-        return ITEMS_LENGTH;
-    }
-
-    public int getHEALTH_LENGTH() {
-        int HEALTH_LENGTH = 4;
-        return HEALTH_LENGTH;
-    }
-
-    public int getSTATUS_BAR_LENGTH() {
-        int STATUS_BAR_LENGTH = 10;
-        return STATUS_BAR_LENGTH;
-    }
-
-    public int ENEMY_ALERT_RANGE() {
-        int ENEMY_ALERT_RANGE = 3;
-        return ENEMY_ALERT_RANGE;
-    }
-
-    public String getROOM_DIRECTORY() {
-        String ROOM_DIRECTORY = "rooms/";
-        return ROOM_DIRECTORY;
-    }
-
-    public String[] getROOM_FILENAMES() {
-        return ROOM_FILENAMES;
-    }
-
-    public Position getINITIAL_POSITION() {
-        return INITIAL_POSITION;
+    private static List<Inventory> createInitialInventory() {
+        List<Inventory> inventory = new ArrayList<>();
+        for (int i = 0; i < ITEMS_LENGTH; i++) {
+            inventory.add(new EmptyInventory(null));
+        }
+        return inventory;
     }
 }

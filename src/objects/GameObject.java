@@ -22,6 +22,6 @@ public abstract class GameObject implements ImageTile {
         return position;
     }
 
-    public abstract void react(GameObject otherObject, RoomManager roomManager, StatusManager statusManager);
+    public abstract void react(GameObject otherObject);
     public abstract boolean isWalkable();
 }

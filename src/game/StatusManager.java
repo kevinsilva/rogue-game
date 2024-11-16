@@ -2,23 +2,32 @@ package pt.upskill.projeto1.game;
 
 import pt.upskill.projeto1.gui.ImageMatrixGUI;
 import pt.upskill.projeto1.gui.ImageTile;
-import pt.upskill.projeto1.objects.*;
+import pt.upskill.projeto1.objects.fire.Fire;
+import pt.upskill.projeto1.objects.hero.Hero;
+import pt.upskill.projeto1.objects.hero.HeroStatus;
+import pt.upskill.projeto1.objects.items.EmptyInventory;
+import pt.upskill.projeto1.objects.items.Inventory;
+import pt.upskill.projeto1.objects.ui.Black;
+import pt.upskill.projeto1.objects.ui.Green;
+import pt.upskill.projeto1.objects.ui.GreenRed;
+import pt.upskill.projeto1.objects.ui.Red;
 import pt.upskill.projeto1.rogue.utils.Constants;
 import pt.upskill.projeto1.rogue.utils.Position;
 
 import java.util.*;
 
 public class StatusManager {
+    private static final StatusManager INSTANCE = new StatusManager();
     ImageMatrixGUI GUI = ImageMatrixGUI.getInstance();
-    Constants CONSTANTS = new Constants();
-    private HeroStatus heroStatus;
+    private HeroStatus heroStatus = Hero.getInstance().getStatus();
     List<ImageTile> statusBar = new ArrayList<>();
 
-    public StatusManager(HeroStatus heroStatus) {
-        this.heroStatus = heroStatus;
+    private StatusManager() {
         this.updateStatusBar();
         this.loadInitialMessage();
     }
+
+    public static StatusManager getInstance() { return INSTANCE; }
 
     public void updateStatusBar() {
         clearStatusBar();
@@ -35,7 +44,7 @@ public class StatusManager {
     }
 
     public void addBarBackground() {
-        for (int i = 0; i < CONSTANTS.getSTATUS_BAR_LENGTH(); i++) {
+        for (int i = 0; i < Constants.STATUS_BAR_LENGTH; i++) {
             statusBar.add(new Black(new Position(i, 0)));
         }
         GUI.newStatusImages(statusBar);
@@ -43,16 +52,17 @@ public class StatusManager {
 
     public void addFireballs() {
         for (int i = 0; i < heroStatus.getFireballs(); i++) {
-            statusBar.set(i, new Fire(new Position(i, 0), null, null));
+            statusBar.set(i, new Fire(new Position(i, 0), null));
         }
     }
 
     public void addHealth() {
         int health = heroStatus.getHealth();
-        int scaledHealth = (int) Math.round((double) health / (CONSTANTS.getINITIAL_HEALTH() / CONSTANTS.getHEALTH_SCALE()));
-        int healthStartIndex = CONSTANTS.getITEMS_LENGTH();
+        int convertedTotalHealth = Constants.INITIAL_HEALTH / Constants.HEALTH_SCALE;
+        int scaledHealth = (int) Math.round((double) health / convertedTotalHealth);
+        int healthStartIndex = Constants.ITEMS_LENGTH;
 
-        for (int i = 0; i < CONSTANTS.getHEALTH_LENGTH(); i++) {
+        for (int i = 0; i < Constants.HEALTH_LENGTH; i++) {
             int index = healthStartIndex + i;
             if (scaledHealth > 2 * i + 1) {
                 statusBar.set(index, new Green(new Position(index, 0)));
@@ -66,19 +76,18 @@ public class StatusManager {
 
     public void addInventory() {
         List<Inventory> inventory = heroStatus.getInventory();
-        int inventoryStartIndex = CONSTANTS.getITEMS_LENGTH() + CONSTANTS.getHEALTH_LENGTH();
+        int inventoryStartIndex = Constants.ITEMS_LENGTH + Constants.HEALTH_LENGTH;
 
         for (int i = 0; i < inventory.size(); i++) {
             Inventory item = inventory.get(i);
             int index = inventoryStartIndex + i;
 
-            if(index < CONSTANTS.getSTATUS_BAR_LENGTH() && !(item instanceof EmptyInventory)) {
+            if(index < Constants.STATUS_BAR_LENGTH && !(item instanceof EmptyInventory)) {
                 item.setPosition(new Position(index, 0));
                 statusBar.set(index, item);
             }
         }
     }
-
 
     public void addMessage(String message) {
         GUI.setStatus(message);

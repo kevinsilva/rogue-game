@@ -1,7 +1,17 @@
 package pt.upskill.projeto1.game;
 
-import pt.upskill.projeto1.gui.ImageMatrixGUI;
 import pt.upskill.projeto1.objects.*;
+import pt.upskill.projeto1.objects.enemies.BadGuy;
+import pt.upskill.projeto1.objects.enemies.Skeleton;
+import pt.upskill.projeto1.objects.enemies.Thief;
+import pt.upskill.projeto1.objects.environment.Door;
+import pt.upskill.projeto1.objects.environment.DoorOpen;
+import pt.upskill.projeto1.objects.environment.DoorWay;
+import pt.upskill.projeto1.objects.environment.Floor;
+import pt.upskill.projeto1.objects.hero.Hero;
+import pt.upskill.projeto1.objects.items.*;
+import pt.upskill.projeto1.objects.obstacles.DoorClosed;
+import pt.upskill.projeto1.objects.obstacles.Wall;
 import pt.upskill.projeto1.rogue.utils.Constants;
 import pt.upskill.projeto1.rogue.utils.Position;
 import java.io.File;
@@ -10,25 +20,26 @@ import java.util.List;
 import java.util.Scanner;
 
 public class RoomManager {
+    private Hero hero = Hero.getInstance();
+    private static final RoomManager INSTANCE = new RoomManager();
     private final Constants CONSTANTS = new Constants();
     private List<Room> rooms = new ArrayList<>();
     private Room currentRoom;
-    private final Hero hero;
-    ImageMatrixGUI GUI = ImageMatrixGUI.getInstance();
+    private StatusManager statusManager;
 
-    public RoomManager(Hero hero) {
-        this.hero = hero;
+    private RoomManager() {
         loadRooms();
         if(!rooms.isEmpty()) {
             currentRoom = rooms.getFirst();
             currentRoom.addHero(hero);
             currentRoom.addEnemies();
-            currentRoom.moveEnemies();
         }
     }
 
+    public static RoomManager getInstance() { return INSTANCE; }
+
     public void loadRooms() {
-        String[] roomFiles = CONSTANTS.getROOM_FILENAMES();
+        String[] roomFiles = Constants.ROOM_FILENAMES;
         for (String roomFile : roomFiles) {
             rooms.add(fileParser(roomFile));
         }
@@ -38,7 +49,7 @@ public class RoomManager {
         Room room = new Room();
         int y = 0;
         try {
-            Scanner fileScanner = new Scanner(new File(CONSTANTS.getROOM_DIRECTORY() + roomFile));
+            Scanner fileScanner = new Scanner(new File(Constants.ROOM_DIRECTORY + roomFile));
             while(fileScanner.hasNextLine()) {
                 String line = fileScanner.nextLine();
                 String[] letters = line.split("");
@@ -128,16 +139,18 @@ public class RoomManager {
                 key.setPosition(position);
                 room.addGameObject(key);
                 break;
+            case "t":
+                room.addGameObject(new Trap(position));
             case "S":
-                Skeleton skeleton = new Skeleton(position, room);
+                Skeleton skeleton = new Skeleton(position);
                 room.addEnemy(skeleton);
                 break;
             case "B":
-                BadGuy badGuy = new BadGuy(position, room);
+                BadGuy badGuy = new BadGuy(position);
                 room.addEnemy(badGuy);
                 break;
             case "T":
-                Thief thief = new Thief(position, room);
+                Thief thief = new Thief(position);
                 room.addEnemy(thief);
                 break;
             default:
@@ -151,10 +164,11 @@ public class RoomManager {
     }
 
     public void setCurrentRoom(Room currentRoom) {
+        this.currentRoom.stopEnemies();
+
         this.currentRoom = currentRoom;
         this.currentRoom.addHero(hero);
         this.currentRoom.addEnemies();
-        this.currentRoom.moveEnemies();
         this.updateGUI();
     }
 
@@ -163,7 +177,7 @@ public class RoomManager {
     }
 
     public int getRoomIndexByFileName(String roomFileName) {
-        String[] roomFiles = CONSTANTS.getROOM_FILENAMES();
+        String[] roomFiles = Constants.ROOM_FILENAMES;
 
         for(int i = 0; i < roomFiles.length; i++) {
             if(roomFileName.equals(roomFiles[i])) return i;
@@ -197,6 +211,6 @@ public class RoomManager {
     }
 
     public void updateGUI() {
-        this.GUI.newImages(this.currentRoom.getGameObjects());
+        this.currentRoom.updateGUI();
     }
 }

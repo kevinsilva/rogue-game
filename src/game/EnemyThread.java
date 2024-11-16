@@ -1,6 +1,6 @@
 package pt.upskill.projeto1.game;
 
-import pt.upskill.projeto1.objects.Enemy;
+import pt.upskill.projeto1.objects.enemies.Enemy;
 
 public class EnemyThread extends Thread {
     boolean control = true;
@@ -22,6 +22,7 @@ public class EnemyThread extends Thread {
                 enemy.move();
 
             } catch (Exception e) {
+                Thread.currentThread().interrupt();
                 throw new RuntimeException(e);
             }
 
