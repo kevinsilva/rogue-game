@@ -1,18 +1,15 @@
 package pt.upskill.projeto1.game;
 
 import pt.upskill.projeto1.objects.*;
-import pt.upskill.projeto1.objects.enemies.Prisoner;
-import pt.upskill.projeto1.objects.enemies.Skeleton;
-import pt.upskill.projeto1.objects.enemies.Thief;
-import pt.upskill.projeto1.objects.environment.Door;
-import pt.upskill.projeto1.objects.environment.DoorOpen;
-import pt.upskill.projeto1.objects.environment.DoorWay;
-import pt.upskill.projeto1.objects.environment.Floor;
+import pt.upskill.projeto1.objects.characters.Princess;
+import pt.upskill.projeto1.objects.enemies.*;
+import pt.upskill.projeto1.objects.environment.*;
 import pt.upskill.projeto1.objects.characters.Hero;
 import pt.upskill.projeto1.objects.items.*;
 import pt.upskill.projeto1.objects.obstacles.DoorClosed;
 import pt.upskill.projeto1.objects.obstacles.Wall;
 import pt.upskill.projeto1.rogue.utils.Constants;
+import pt.upskill.projeto1.rogue.utils.GameplayState;
 import pt.upskill.projeto1.rogue.utils.Position;
 import java.io.File;
 import java.util.ArrayList;
@@ -22,7 +19,6 @@ import java.util.Scanner;
 public class RoomManager {
     private Hero hero = Hero.getInstance();
     private static final RoomManager INSTANCE = new RoomManager();
-    private final Constants CONSTANTS = new Constants();
     private List<Room> rooms = new ArrayList<>();
     private Room currentRoom;
     private StatusManager statusManager;
@@ -134,6 +130,15 @@ public class RoomManager {
                     room.addGameObject(door);
                 }
                 break;
+            case "u":
+                room.addGameObject(new StairsUp(position));
+                break;
+            case "d":
+                room.addGameObject(new StairsDown(position));
+                break;
+            case "G":
+                room.addGameObject(new Grass(position));
+                break;
             case "k":
                 Key key = room.getKey();
                 key.setPosition(position);
@@ -141,17 +146,29 @@ public class RoomManager {
                 break;
             case "t":
                 room.addGameObject(new Trap(position));
+                break;
+            case "B":
+                Boss boss = new Boss(position);
+                room.addEnemy(boss);
+                break;
             case "S":
                 Skeleton skeleton = new Skeleton(position);
                 room.addEnemy(skeleton);
                 break;
-            case "B":
+            case "P":
                 Prisoner prisoner = new Prisoner(position);
                 room.addEnemy(prisoner);
                 break;
             case "T":
                 Thief thief = new Thief(position);
                 room.addEnemy(thief);
+                break;
+            case "E":
+                EvilBat evilBat = new EvilBat(position);
+                room.addEnemy(evilBat);
+                break;
+            case "p":
+                room.addGameObject(new Princess(position));
                 break;
             default:
                 room.addGameObject(new Floor(position));
@@ -169,7 +186,19 @@ public class RoomManager {
         this.currentRoom = currentRoom;
         this.currentRoom.addHero(hero);
         this.currentRoom.addEnemiesToGameObjects();
+
+        if (isLastRoom()) {
+            SoundManager soundManager = SoundManager.getInstance();
+
+            soundManager.stopSound();
+            soundManager.loadSound(Constants.SOUND_BATTLE);
+        }
+
         this.updateGUI();
+    }
+
+    public void clearRooms() {
+        rooms.clear();
     }
 
     public int getCurrentRoomIndex() {
@@ -208,6 +237,10 @@ public class RoomManager {
         }
 
         return this.currentRoom;
+    }
+
+    public boolean isLastRoom() {
+        return getCurrentRoomIndex() == rooms.size() - 1;
     }
 
     public void updateGUI() {

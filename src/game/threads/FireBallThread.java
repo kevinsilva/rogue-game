@@ -1,4 +1,4 @@
-package pt.upskill.projeto1.game;
+package pt.upskill.projeto1.game.threads;
 
 import pt.upskill.projeto1.gui.FireTile;
 import pt.upskill.projeto1.gui.ImageMatrixGUI;

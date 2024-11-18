@@ -1,6 +1,6 @@
 package pt.upskill.projeto1.gui;
 
-import pt.upskill.projeto1.game.FireBallThread;
+import pt.upskill.projeto1.game.threads.FireBallThread;
 import pt.upskill.projeto1.rogue.utils.Position;
 
 /**

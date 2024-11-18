@@ -4,7 +4,7 @@ public enum Damage {
     UNARMED(5),
     SWORD(10),
     HAMMER(15),
-    FIREBALL(50);
+    FIREBALL(30);
 
     private final int damage;
 

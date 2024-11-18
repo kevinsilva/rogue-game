@@ -2,6 +2,7 @@ package pt.upskill.projeto1.objects.obstacles;
 
 import pt.upskill.projeto1.game.GameManager;
 import pt.upskill.projeto1.game.RoomManager;
+import pt.upskill.projeto1.game.StatusManager;
 import pt.upskill.projeto1.objects.environment.Door;
 import pt.upskill.projeto1.objects.GameObject;
 import pt.upskill.projeto1.objects.characters.Hero;
@@ -34,6 +35,7 @@ public class DoorClosed extends Door {
     @Override
     public void react(GameObject otherObject) {
         RoomManager roomManager = RoomManager.getInstance();
+        StatusManager statusManager = StatusManager.getInstance();
 
         if(otherObject instanceof Hero) {
             Hero hero = (Hero) otherObject;
@@ -46,6 +48,8 @@ public class DoorClosed extends Door {
                 Door targetDoor = nextRoom.getDoor(this.getTargetDoorNumber());
 
                 if (targetDoor != null) hero.setPosition(targetDoor.getPosition());
+            } else {
+                statusManager.addMessage("Door is locked! Get a key to open.");
             }
         }
     }

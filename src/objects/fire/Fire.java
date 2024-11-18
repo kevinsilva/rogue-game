@@ -42,7 +42,7 @@ public class Fire extends GameObject implements FireTile {
             roomManager.getCurrentRoom().addGameObject(fireold);
             roomManager.updateGUI();
 
-            roomManager.getCurrentRoom().removeGameObjectAfterMs(fireold, 250);
+            roomManager.getCurrentRoom().removeGameObjectAfterMs(fireold, 500);
 
             return false;
         }

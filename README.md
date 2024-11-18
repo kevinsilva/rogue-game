@@ -1,13 +1,5 @@
 # Rogue
 
-## Implementation Details
-
- - GameManager: manages game state (score), connects Engine and GUI. 
- - RoomManager: manages room parsing and room setting.
- - Characters: Hero and Enemies implement movement and collision.
- - Objects: Inventory.
- - Validation of inputs.
-
-## Development
+Rogue is a 2D adventure game where players take on the role of a hero navigating through a series of rooms filled with challenges and enemies. The main goal is to explore the environment, defeat enemies, manage items and ultimately rescue the princess.
 
 

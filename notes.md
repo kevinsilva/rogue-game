@@ -284,22 +284,4 @@ public void handleGameOver() {
 System.out.println("Game Over! You have been defeated.");
 roomManager.getCurrentRoom().stopEnemies();
 GUI.showMessage("GO", "Game Over! Press R to restart or Q to quit.");
-
-    // Prompt for user name
-    String playerName = GUI.promptForInput("Enter your name to save your score:");
-
-    // Save the score
-    Leaderboard leaderboard = new Leaderboard();
-    leaderboard.addScore(playerName, gameManager.getScore());
-
-    // Wait for user input to restart or quit
-    while (true) {
-        int keyPressed = GUI.getKeyPressed();
-        if (keyPressed == KeyEvent.VK_R) {
-            gameManager.startGame();
-            break;
-        } else if (keyPressed == KeyEvent.VK_Q) {
-            System.exit(0);
-        }
-    }
 }

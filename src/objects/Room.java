@@ -10,6 +10,7 @@ import pt.upskill.projeto1.rogue.utils.Position;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 
 public class Room {
@@ -135,16 +136,14 @@ public class Room {
                 enemy.getEnemyThread().stopThread();
             }
         }
+        updateGUI();
     }
 
     public void clearEnemies() {
         stopEnemies();
-        for (Enemy enemy : enemies) {
-            removeGameObject(enemy);
-            this.gameObjects.remove(enemy);
-            GUI.removeImage(enemy);
-        }
         getEnemies().clear();
+        enemies.clear();
+        gameObjects.removeIf(gameObject -> gameObject instanceof Enemy);
         updateGUI();
     }
 

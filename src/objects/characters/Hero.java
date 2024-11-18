@@ -1,9 +1,10 @@
 package pt.upskill.projeto1.objects.characters;
 
-import pt.upskill.projeto1.game.FireBallThread;
+import pt.upskill.projeto1.game.threads.FireBallThread;
 import pt.upskill.projeto1.game.GameManager;
 import pt.upskill.projeto1.game.RoomManager;
 import pt.upskill.projeto1.game.StatusManager;
+import pt.upskill.projeto1.gui.ImageMatrixGUI;
 import pt.upskill.projeto1.gui.ImageTile;
 import pt.upskill.projeto1.objects.GameObject;
 import pt.upskill.projeto1.objects.Room;
@@ -183,8 +184,10 @@ public class Hero extends GameObject {
     @Override
     public void react(GameObject otherObject) {
         RoomManager roomManager = RoomManager.getInstance();
+        StatusManager statusManager = StatusManager.getInstance();
 
         if (otherObject instanceof Key) {
+            statusManager.addMessage("Picked up a Key");
             GameManager.getInstance().updateScore(Points.COLLECT_KEY.getPoints());
             Key key = (Key) otherObject;
             keys.put(key.getKeyId(), key);
@@ -192,14 +195,16 @@ public class Hero extends GameObject {
         }
 
         if (otherObject instanceof Inventory) {
+            statusManager.addMessage("Picked up an Item");
             GameManager.getInstance().updateScore(Points.COLLECT_ITEM.getPoints());
             Inventory item = (Inventory) otherObject;
             addItem(item);
         }
 
         if (otherObject instanceof Enemy) {
+            statusManager.addMessage("Watch out the enemy!");
             Enemy enemy = (Enemy) otherObject;
-            //attack(enemy);
+            attack(enemy);
         }
 
     }

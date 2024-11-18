@@ -5,8 +5,13 @@ import pt.upskill.projeto1.game.StatusManager;
 import pt.upskill.projeto1.objects.fire.Fire;
 import pt.upskill.projeto1.objects.GameObject;
 import pt.upskill.projeto1.objects.characters.Hero;
+import pt.upskill.projeto1.objects.items.EmptyInventory;
+import pt.upskill.projeto1.objects.items.Inventory;
 import pt.upskill.projeto1.objects.items.Trap;
 import pt.upskill.projeto1.rogue.utils.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class Thief extends Enemy {
 
@@ -15,7 +20,13 @@ public class Thief extends Enemy {
     }
 
     public void steal(Hero hero) {
+        List<Inventory> newInventory = new ArrayList<>();
         hero.getStatus().getInventory().clear();
+        for (int i = 0; i < Constants.ITEMS_LENGTH; i++) {
+            newInventory.add(new EmptyInventory(null));
+        }
+        hero.getStatus().setInventory(newInventory);
+        StatusManager.getInstance().addMessage("The thief stole all your inventory!");
     }
 
     @Override

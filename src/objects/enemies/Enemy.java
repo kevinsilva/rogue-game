@@ -1,9 +1,10 @@
 package pt.upskill.projeto1.objects.enemies;
 
-import pt.upskill.projeto1.game.EnemyThread;
+import pt.upskill.projeto1.game.threads.EnemyMoveThread;
 import pt.upskill.projeto1.game.GameManager;
 import pt.upskill.projeto1.game.RoomManager;
 import pt.upskill.projeto1.game.StatusManager;
+import pt.upskill.projeto1.game.threads.EnemyTrapThread;
 import pt.upskill.projeto1.objects.GameObject;
 import pt.upskill.projeto1.objects.characters.Hero;
 import pt.upskill.projeto1.objects.items.Trap;
@@ -14,7 +15,8 @@ public class Enemy extends GameObject {
     private int power;
     private EnemyType type;
     private boolean trapped;
-    private EnemyThread enemyThread;
+    private EnemyMoveThread enemyMoveThread;
+    private EnemyTrapThread trapThread;
 
     public Enemy(Position position, EnemyType type) {
         super(position);
@@ -22,14 +24,19 @@ public class Enemy extends GameObject {
         this.health = type.getHealth();
         this.power = type.getPower();
         this.trapped = false;
-        this.enemyThread = null;
+        this.enemyMoveThread = null;
     }
 
     public void die() {
-        GameManager.getInstance().updateScore(Points.DEFEAT_ENEMY.getPoints());
+        StatusManager statusManager = StatusManager.getInstance();
         RoomManager roomManager = RoomManager.getInstance();
+        GameManager.getInstance().updateScore(Points.DEFEAT_ENEMY.getPoints());
 
-        if (enemyThread != null && enemyThread.isAlive()) this.enemyThread.stopThread();
+        statusManager.addMessage("Enemy died!");
+
+        if (trapThread != null && trapThread.isAlive()) trapThread.stopThread();
+        if (enemyMoveThread != null && enemyMoveThread.isAlive()) this.enemyMoveThread.stopThread();
+
         roomManager.getCurrentRoom().getEnemies().remove(this);
         roomManager.getCurrentRoom().removeGameObject(this);
     }
@@ -51,16 +58,8 @@ public class Enemy extends GameObject {
         if(trapped) return;
         setTrapped(true);
 
-        new Thread(() -> {
-            try {
-                Thread.sleep(10000);
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                throw new RuntimeException(e);
-            } finally {
-                setTrapped(false);
-            }
-        }).start();
+        trapThread = new EnemyTrapThread(this);
+        trapThread.start();
     }
 
     public void attack(Hero hero) {
@@ -70,16 +69,15 @@ public class Enemy extends GameObject {
     }
 
     public void startEnemyThread() {
-        if (enemyThread != null && enemyThread.isAlive()) return;
-        this.enemyThread = new EnemyThread(this);
-        this.enemyThread.start();
+        if (enemyMoveThread != null && enemyMoveThread.isAlive()) return;
+        this.enemyMoveThread = new EnemyMoveThread(this);
+        this.enemyMoveThread.start();
     }
 
     public void move() {
-        if (isTrapped()) return;
+        if (isTrapped() || GameManager.getInstance().getGameplayState() != GameplayState.GAME_ON) return;
 
         RoomManager roomManager = RoomManager.getInstance();
-        StatusManager statusManager = StatusManager.getInstance();
 
         Position heroPosition = roomManager.getCurrentRoom().getHero().getPosition();
         Vector2D heroVector = new Vector2D(heroPosition.getX(), heroPosition.getY());
@@ -131,18 +129,14 @@ public class Enemy extends GameObject {
 
     public int getHealth() { return health; }
 
-    public int getPower() { return power; }
-
     public void setHealth(int health) { this.health = health; }
-
-    public void setPower(int power) { this.power = power; }
 
     public EnemyType getType() {
         return type;
     }
 
-    public EnemyThread getEnemyThread() {
-        return enemyThread;
+    public EnemyMoveThread getEnemyThread() {
+        return enemyMoveThread;
     }
 
     @Override
@@ -159,10 +153,6 @@ public class Enemy extends GameObject {
             Hero hero = (Hero) otherObject;
             attack(hero);
             statusManager.updateStatusBar();
-        }
-
-        if (otherObject instanceof Trap) {
-            getTrapped();
         }
     }
 

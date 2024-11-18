@@ -1,6 +1,9 @@
 package pt.upskill.projeto1.objects.items;
 
+import pt.upskill.projeto1.game.GameManager;
+import pt.upskill.projeto1.game.StatusManager;
 import pt.upskill.projeto1.objects.GameObject;
+import pt.upskill.projeto1.objects.enemies.Enemy;
 import pt.upskill.projeto1.rogue.utils.Position;
 
 public class Trap extends Inventory {
@@ -11,7 +14,6 @@ public class Trap extends Inventory {
     }
 
     public void setIsArmed() {
-        System.out.println("armed");
         isArmed = true;
     }
 
@@ -26,5 +28,12 @@ public class Trap extends Inventory {
     }
 
     @Override
-    public void react(GameObject otherObject) {}
+    public void react(GameObject otherObject) {
+        StatusManager statusManager = StatusManager.getInstance();
+        if (otherObject instanceof Enemy) {
+            statusManager.addMessage("Enemy trapped!");
+            Enemy enemy = (Enemy) otherObject;
+            enemy.getTrapped();
+        }
+    }
 }

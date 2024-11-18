@@ -4,8 +4,7 @@ import pt.upskill.projeto1.game.state.GameState;
 import pt.upskill.projeto1.rogue.utils.Constants;
 
 import java.io.*;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class Leaderboard implements Serializable {
     private Map<String, Integer> scores = new HashMap<>();
@@ -34,10 +33,36 @@ public class Leaderboard implements Serializable {
             throw new RuntimeException(e);
         }
     }
-    public void addScore(String playerName, int score) {
-        scores.put(playerName, score);
-        saveScores();
 
-        //sort
+    public void addScore(String playerName, int score) {
+        loadScores();
+        if (scores.containsKey(playerName)) {
+            if (score > scores.get(playerName)) scores.put(playerName, score);
+        } else {
+            scores.put(playerName, score);
+        }
+
+        saveScores();
+    }
+
+    public Map<String, Integer> getScores() {
+        return scores;
+    }
+
+    private List<Map.Entry<String, Integer>> sortScores() {
+        List<Map.Entry<String, Integer>> scoreList = new ArrayList<>(scores.entrySet());
+
+        Collections.sort(scoreList, (score1, score2) -> score2.getValue().compareTo(score1.getValue()));
+        return scoreList;
+    }
+
+    public String displayScores() {
+        String leaderboard = "LEADERBOARD\n" + "--------------------------\n\n";
+
+        for (Map.Entry<String, Integer> entry : sortScores()) {
+            leaderboard += entry.getKey() + " - " + entry.getValue() + "\n";
+        }
+
+        return leaderboard;
     }
 }

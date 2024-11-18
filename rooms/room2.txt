@@ -1,16 +1,17 @@
 #
 # 0 D room1.txt 1 key1
 # 1 D room1.txt 0
+# 2 D room3.txt 1 key2
 #
 # k key1
 #
-WWWWWWWWWW
-W    G   W
+WWWW2WWWWW
+WS  P    W
 W        W
 W  m  k  W
-W T      W
-W      W W
-W      WhW
+W        W
+W P    W W
+W    S WsW
 W   WWWW W
-0   W    W
+0   W   GW
 WWWWW1WWWW

@@ -1,24 +1,22 @@
 package pt.upskill.projeto1.objects.environment;
 
 import pt.upskill.projeto1.game.GameManager;
-import pt.upskill.projeto1.game.RoomManager;
+import pt.upskill.projeto1.game.StatusManager;
 import pt.upskill.projeto1.objects.GameObject;
 import pt.upskill.projeto1.objects.characters.Hero;
-import pt.upskill.projeto1.rogue.utils.Points;
 import pt.upskill.projeto1.rogue.utils.Position;
 
-public class StairsDown extends GameObject {
-    public StairsDown(Position position) {
+public class Grass extends GameObject {
+    public Grass(Position position) {
         super(position);
     }
 
     @Override
     public void react(GameObject otherObject) {
-        RoomManager roomManager = RoomManager.getInstance();
-
-        if(otherObject instanceof Hero) {
-            GameManager.getInstance().updateScore(Points.PASS_ROOM.getPoints());
-            roomManager.getRoomAtIndex(roomManager.getCurrentRoomIndex() + 1);
+        StatusManager statusManager = StatusManager.getInstance();
+        if (otherObject instanceof Hero) {
+            statusManager.addMessage("Game Saved!");
+            GameManager.getInstance().saveGame();
         }
     }
 
@@ -29,6 +27,6 @@ public class StairsDown extends GameObject {
 
     @Override
     public String getName() {
-        return "StairsDown";
+        return "Grass";
     }
 }

@@ -18,7 +18,7 @@ public class StairsUp extends GameObject {
 
         if(otherObject instanceof Hero) {
             GameManager.getInstance().updateScore(Points.PASS_ROOM.getPoints());
-            roomManager.getNextRoom();
+            roomManager.getRoomAtIndex(roomManager.getCurrentRoomIndex() - 1);
         }
     }
 

@@ -15,6 +15,7 @@ import pt.upskill.projeto1.rogue.utils.data.InventoryData;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class GameManager {
@@ -24,8 +25,8 @@ public class GameManager {
     private ImageMatrixGUI GUI;
     private Hero hero = Hero.getInstance();
     private RoomManager roomManager = RoomManager.getInstance();
-    private StatusManager statusManager;
-    private GameplayState gameplayState = GameplayState.GAME_ON;
+    private StatusManager statusManager = StatusManager.getInstance();
+    private GameplayState gameplayState = GameplayState.GAME_START;
 
     private GameManager() {
         this.score = 0;
@@ -36,6 +37,33 @@ public class GameManager {
 
     public void startGame() {
         engine.init();
+    }
+
+    public void togglePause() {
+        if (gameplayState == GameplayState.GAME_ON) setGameplayState(GameplayState.GAME_PAUSED);
+        else if (gameplayState == GameplayState.GAME_PAUSED) setGameplayState(GameplayState.GAME_ON);
+    }
+
+    public void restartGame() {
+        SoundManager.getInstance().stopSound();
+        roomManager.getCurrentRoom().removeGameObject(hero);
+
+        this.score = 0;
+        roomManager.clearRooms();
+        roomManager.loadRooms();
+        roomManager.setCurrentRoom(roomManager.getRoomAtIndex(0));
+
+        Hero hero = roomManager.getCurrentRoom().getHero();
+
+        hero.setPosition(Constants.INITIAL_POSITION);
+        hero.getStatus().setHealth(Constants.INITIAL_HEALTH);
+        hero.getStatus().setFireballs(Constants.INITIAL_FIREBALLS);
+        hero.getStatus().setInventory(Constants.INITIAL_INVENTORY);
+        hero.setKeys(new HashMap<>());
+        statusManager.updateStatusBar();
+
+        setGameplayState(GameplayState.GAME_START);
+        roomManager.updateGUI();
     }
 
     public GameplayState getGameplayState() {
@@ -51,9 +79,9 @@ public class GameManager {
     }
 
     public void updateScore(int points) {
-        if (score < 0 ) score = 0;
         score += points;
-        System.out.println("POINTS:" + score);
+        if (score < 0 ) score = 0;
+        System.out.println("Score:" + score);
     }
 
     public void saveGame() {
@@ -92,6 +120,7 @@ public class GameManager {
     }
 
     public void loadGame() {
+        setGameplayState(GameplayState.GAME_ON);
         try {
             FileInputStream fileIn = new FileInputStream(Constants.SAVES_FILEPATH);
             ObjectInputStream in = new ObjectInputStream(fileIn);
@@ -114,8 +143,8 @@ public class GameManager {
 
     private void restoreHeroState(HeroState heroState) {
         List<Inventory> inventory = new ArrayList<>();
-
         hero.setHealth(heroState.getHealth());
+        hero.getStatus().setHealth(heroState.getHealth());
         hero.getStatus().setFireballs(heroState.getFireballs());
         hero.setPosition(heroState.getPosition());
         hero.setKeys(heroState.getKeys());
@@ -129,9 +158,8 @@ public class GameManager {
     }
 
     private void restoreRoomState(RoomState roomState) {
-        roomManager.getRoomAtIndex(roomState.getCurrentRoomIndex());
-        roomManager.getCurrentRoom().removeGameObject(hero);
         roomManager.getCurrentRoom().clearEnemies();
+        roomManager.getRoomAtIndex(roomState.getCurrentRoomIndex());
 
 
         for (EnemyData enemyData : roomState.getEnemies()) {
@@ -174,6 +202,10 @@ public class GameManager {
                 EvilBat evilBat = new EvilBat(enemyData.getPosition());
                 evilBat.setHealth(enemyData.getHealth());
                 return evilBat;
+            case EnemyType.BOSS:
+                Boss boss = new Boss(enemyData.getPosition());
+                boss.setHealth(enemyData.getHealth());
+                return boss;
             default:
                 return null;
         }
