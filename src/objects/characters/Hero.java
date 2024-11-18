@@ -36,7 +36,6 @@ public class Hero extends GameObject {
         status.setHealth(health);
 
         if(health <= 0) GameManager.getInstance().setGameplayState(GameplayState.GAME_OVER);
-        System.out.println(GameManager.getInstance().getGameplayState());
     }
 
     public int calculateTotalDamage() {

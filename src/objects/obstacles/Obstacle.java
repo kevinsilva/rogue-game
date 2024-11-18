@@ -15,7 +15,6 @@ public abstract class Obstacle extends GameObject {
 
     @Override
     public void react(GameObject otherObject) {
-        System.out.println("Obstacle");
     }
 
     @Override

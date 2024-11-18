@@ -81,7 +81,6 @@ public class GameManager {
     public void updateScore(int points) {
         score += points;
         if (score < 0 ) score = 0;
-        System.out.println("Score:" + score);
     }
 
     public void saveGame() {
