@@ -4,12 +4,12 @@ import pt.upskill.projeto1.game.state.GameState;
 import pt.upskill.projeto1.game.state.HeroState;
 import pt.upskill.projeto1.game.state.RoomState;
 import pt.upskill.projeto1.gui.ImageMatrixGUI;
-import pt.upskill.projeto1.objects.enemies.BadGuy;
-import pt.upskill.projeto1.objects.enemies.Enemy;
-import pt.upskill.projeto1.objects.hero.Hero;
+import pt.upskill.projeto1.objects.enemies.*;
+import pt.upskill.projeto1.objects.characters.Hero;
 import pt.upskill.projeto1.objects.items.*;
 import pt.upskill.projeto1.rogue.utils.Constants;
 import pt.upskill.projeto1.rogue.utils.EnemyType;
+import pt.upskill.projeto1.rogue.utils.GameplayState;
 import pt.upskill.projeto1.rogue.utils.data.EnemyData;
 import pt.upskill.projeto1.rogue.utils.data.InventoryData;
 
@@ -25,6 +25,7 @@ public class GameManager {
     private Hero hero = Hero.getInstance();
     private RoomManager roomManager = RoomManager.getInstance();
     private StatusManager statusManager;
+    private GameplayState gameplayState = GameplayState.GAME_ON;
 
     private GameManager() {
         this.score = 0;
@@ -37,12 +38,22 @@ public class GameManager {
         engine.init();
     }
 
+    public GameplayState getGameplayState() {
+        return gameplayState;
+    }
+
+    public void setGameplayState(GameplayState gameplayState) {
+        this.gameplayState = gameplayState;
+    }
 
     public int getScore() {
         return score;
     }
 
-    public void updateScore() {
+    public void updateScore(int points) {
+        if (score < 0 ) score = 0;
+        score += points;
+        System.out.println("POINTS:" + score);
     }
 
     public void saveGame() {
@@ -118,15 +129,17 @@ public class GameManager {
     }
 
     private void restoreRoomState(RoomState roomState) {
-        roomManager.setCurrentRoom(roomManager.getRoomAtIndex(roomState.getCurrentRoomIndex()));
-
+        roomManager.getRoomAtIndex(roomState.getCurrentRoomIndex());
+        roomManager.getCurrentRoom().removeGameObject(hero);
         roomManager.getCurrentRoom().clearEnemies();
 
+
         for (EnemyData enemyData : roomState.getEnemies()) {
-            roomManager.getCurrentRoom().addEnemy(createEnemyFromData(enemyData));
+            Enemy enemy = createEnemyFromData(enemyData);
+            roomManager.getCurrentRoom().addEnemy(enemy);
+            roomManager.getCurrentRoom().addGameObject(enemy);
         }
 
-        roomManager.updateGUI();
         roomManager.getCurrentRoom().moveEnemies();
     }
 
@@ -145,18 +158,22 @@ public class GameManager {
 
     private Enemy createEnemyFromData(EnemyData enemyData) {
         switch (enemyData.getType()) {
-            case EnemyType.BADGUY:
-                BadGuy badGuy = new BadGuy(enemyData.getPosition());
-                badGuy.setHealth(enemyData.getHealth());
-                return badGuy;
+            case EnemyType.PRISONER:
+                Prisoner prisoner = new Prisoner(enemyData.getPosition());
+                prisoner.setHealth(enemyData.getHealth());
+                return prisoner;
             case EnemyType.SKELETON:
-                BadGuy skeleton = new BadGuy(enemyData.getPosition());
+                Skeleton skeleton = new Skeleton(enemyData.getPosition());
                 skeleton.setHealth(enemyData.getHealth());
                 return skeleton;
             case EnemyType.THIEF:
-                BadGuy thief = new BadGuy(enemyData.getPosition());
+                Thief thief = new Thief(enemyData.getPosition());
                 thief.setHealth(enemyData.getHealth());
                 return thief;
+            case EnemyType.EVILBAT:
+                EvilBat evilBat = new EvilBat(enemyData.getPosition());
+                evilBat.setHealth(enemyData.getHealth());
+                return evilBat;
             default:
                 return null;
         }

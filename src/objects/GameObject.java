@@ -6,6 +6,8 @@ import pt.upskill.projeto1.gui.FireTile;
 import pt.upskill.projeto1.gui.ImageTile;
 import pt.upskill.projeto1.rogue.utils.Position;
 
+import java.util.Objects;
+
 public abstract class GameObject implements ImageTile {
     protected Position position;
 
@@ -20,6 +22,20 @@ public abstract class GameObject implements ImageTile {
     @Override
     public Position getPosition() {
         return position;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        GameObject other = (GameObject) obj;
+        return Objects.equals(position, other.position) &&
+                Objects.equals(getName(), other.getName());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(position, getName());
     }
 
     public abstract void react(GameObject otherObject);

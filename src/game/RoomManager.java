@@ -1,14 +1,14 @@
 package pt.upskill.projeto1.game;
 
 import pt.upskill.projeto1.objects.*;
-import pt.upskill.projeto1.objects.enemies.BadGuy;
+import pt.upskill.projeto1.objects.enemies.Prisoner;
 import pt.upskill.projeto1.objects.enemies.Skeleton;
 import pt.upskill.projeto1.objects.enemies.Thief;
 import pt.upskill.projeto1.objects.environment.Door;
 import pt.upskill.projeto1.objects.environment.DoorOpen;
 import pt.upskill.projeto1.objects.environment.DoorWay;
 import pt.upskill.projeto1.objects.environment.Floor;
-import pt.upskill.projeto1.objects.hero.Hero;
+import pt.upskill.projeto1.objects.characters.Hero;
 import pt.upskill.projeto1.objects.items.*;
 import pt.upskill.projeto1.objects.obstacles.DoorClosed;
 import pt.upskill.projeto1.objects.obstacles.Wall;
@@ -32,7 +32,7 @@ public class RoomManager {
         if(!rooms.isEmpty()) {
             currentRoom = rooms.getFirst();
             currentRoom.addHero(hero);
-            currentRoom.addEnemies();
+            currentRoom.addEnemiesToGameObjects();
         }
     }
 
@@ -146,8 +146,8 @@ public class RoomManager {
                 room.addEnemy(skeleton);
                 break;
             case "B":
-                BadGuy badGuy = new BadGuy(position);
-                room.addEnemy(badGuy);
+                Prisoner prisoner = new Prisoner(position);
+                room.addEnemy(prisoner);
                 break;
             case "T":
                 Thief thief = new Thief(position);
@@ -168,7 +168,7 @@ public class RoomManager {
 
         this.currentRoom = currentRoom;
         this.currentRoom.addHero(hero);
-        this.currentRoom.addEnemies();
+        this.currentRoom.addEnemiesToGameObjects();
         this.updateGUI();
     }
 

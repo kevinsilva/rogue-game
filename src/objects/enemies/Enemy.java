@@ -1,10 +1,11 @@
 package pt.upskill.projeto1.objects.enemies;
 
 import pt.upskill.projeto1.game.EnemyThread;
+import pt.upskill.projeto1.game.GameManager;
 import pt.upskill.projeto1.game.RoomManager;
 import pt.upskill.projeto1.game.StatusManager;
 import pt.upskill.projeto1.objects.GameObject;
-import pt.upskill.projeto1.objects.hero.Hero;
+import pt.upskill.projeto1.objects.characters.Hero;
 import pt.upskill.projeto1.objects.items.Trap;
 import pt.upskill.projeto1.rogue.utils.*;
 
@@ -25,6 +26,7 @@ public class Enemy extends GameObject {
     }
 
     public void die() {
+        GameManager.getInstance().updateScore(Points.DEFEAT_ENEMY.getPoints());
         RoomManager roomManager = RoomManager.getInstance();
 
         if (enemyThread != null && enemyThread.isAlive()) this.enemyThread.stopThread();

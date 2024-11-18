@@ -4,7 +4,7 @@ import pt.upskill.projeto1.gui.ImageMatrixGUI;
 import pt.upskill.projeto1.objects.enemies.Enemy;
 import pt.upskill.projeto1.objects.environment.Door;
 import pt.upskill.projeto1.objects.environment.Floor;
-import pt.upskill.projeto1.objects.hero.Hero;
+import pt.upskill.projeto1.objects.characters.Hero;
 import pt.upskill.projeto1.objects.items.Key;
 import pt.upskill.projeto1.rogue.utils.Position;
 
@@ -106,7 +106,7 @@ public class Room {
         enemies.add(enemy);
     }
 
-    public void addEnemies() {
+    public void addEnemiesToGameObjects() {
         for(Enemy enemy : enemies) {
             gameObjects.add(enemy);
         };
@@ -139,6 +139,11 @@ public class Room {
 
     public void clearEnemies() {
         stopEnemies();
+        for (Enemy enemy : enemies) {
+            removeGameObject(enemy);
+            this.gameObjects.remove(enemy);
+            GUI.removeImage(enemy);
+        }
         getEnemies().clear();
         updateGUI();
     }

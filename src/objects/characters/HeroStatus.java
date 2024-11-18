@@ -1,4 +1,4 @@
-package pt.upskill.projeto1.objects.hero;
+package pt.upskill.projeto1.objects.characters;
 
 import pt.upskill.projeto1.objects.items.Inventory;
 

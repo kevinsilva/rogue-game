@@ -1,6 +1,7 @@
-package pt.upskill.projeto1.objects.hero;
+package pt.upskill.projeto1.objects.characters;
 
 import pt.upskill.projeto1.game.FireBallThread;
+import pt.upskill.projeto1.game.GameManager;
 import pt.upskill.projeto1.game.RoomManager;
 import pt.upskill.projeto1.game.StatusManager;
 import pt.upskill.projeto1.gui.ImageTile;
@@ -33,7 +34,8 @@ public class Hero extends GameObject {
         setHealth(getHealth() - damage);
         status.setHealth(health);
 
-        if(health <= 0) System.out.println("dead");
+        if(health <= 0) GameManager.getInstance().setGameplayState(GameplayState.GAME_OVER);
+        System.out.println(GameManager.getInstance().getGameplayState());
     }
 
     public int calculateTotalDamage() {
@@ -150,7 +152,7 @@ public class Hero extends GameObject {
                 trap.setIsArmed();
                 roomManager.getCurrentRoom().giveBackGameObject(item);
                 roomManager.getCurrentRoom().addHero(this);
-                roomManager.getCurrentRoom().addEnemies();
+                roomManager.getCurrentRoom().addEnemiesToGameObjects();
                 roomManager.updateGUI();
                 statusManager.updateStatusBar();
             }
@@ -158,6 +160,8 @@ public class Hero extends GameObject {
     }
 
     public void move(Vector2D vector2D) {
+        GameManager.getInstance().updateScore(Points.MOVE.getPoints());
+
         RoomManager roomManager = RoomManager.getInstance();
         StatusManager statusManager = StatusManager.getInstance();
 
@@ -181,21 +185,21 @@ public class Hero extends GameObject {
         RoomManager roomManager = RoomManager.getInstance();
 
         if (otherObject instanceof Key) {
+            GameManager.getInstance().updateScore(Points.COLLECT_KEY.getPoints());
             Key key = (Key) otherObject;
             keys.put(key.getKeyId(), key);
             roomManager.getCurrentRoom().removeGameObject(key);
         }
 
         if (otherObject instanceof Inventory) {
+            GameManager.getInstance().updateScore(Points.COLLECT_ITEM.getPoints());
             Inventory item = (Inventory) otherObject;
             addItem(item);
         }
 
         if (otherObject instanceof Enemy) {
             Enemy enemy = (Enemy) otherObject;
-            System.out.println(enemy.getHealth());
-            attack(enemy);
-            System.out.println(enemy.getHealth());
+            //attack(enemy);
         }
 
     }

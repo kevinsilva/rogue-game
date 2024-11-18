@@ -4,7 +4,7 @@ import pt.upskill.projeto1.game.RoomManager;
 import pt.upskill.projeto1.game.StatusManager;
 import pt.upskill.projeto1.objects.fire.Fire;
 import pt.upskill.projeto1.objects.GameObject;
-import pt.upskill.projeto1.objects.hero.Hero;
+import pt.upskill.projeto1.objects.characters.Hero;
 import pt.upskill.projeto1.objects.items.Trap;
 import pt.upskill.projeto1.rogue.utils.*;
 
@@ -20,13 +20,25 @@ public class Thief extends Enemy {
 
     @Override
     public Vector2D directionTowards(Position target) {
-        int x = target.getX() - getPosition().getX();
-        int y = target.getY() - getPosition().getY();
+        int xDiff = target.getX() - getPosition().getX();
+        int yDiff = target.getY() - getPosition().getY();
 
-        if (x != 0) x = x/Math.abs(x);
-        if (y != 0) y = y/Math.abs(y);
+        if (xDiff != 0) xDiff = xDiff/Math.abs(xDiff);
+        if (yDiff != 0) yDiff = yDiff/Math.abs(yDiff);
 
-        return new Vector2D(x, y);
+        if (Math.abs(xDiff) == 0) {
+            int random = (int) (Math.random() * 2);
+            if (random == 0) xDiff = -1;
+            else yDiff = 1;
+        }
+
+        if (Math.abs(yDiff) == 0) {
+            int random = (int) (Math.random() * 2);
+            if (random == 0) yDiff = -1;
+            else yDiff = 1;
+        }
+
+        return new Vector2D(xDiff, yDiff);
     }
 
     @Override

@@ -9,6 +9,7 @@ import java.util.List;
 public class Constants {
     // Saves Constants
     public static final String SAVES_FILEPATH = "saves/save.dat";
+    public static final String LEADERBOARD_FILEPATH = "saves/leaderboard.txt";
 
     // Room Constants
     public static final String[] ROOM_FILENAMES = {"room0.txt", "room1.txt", "room2.txt"};
@@ -23,11 +24,6 @@ public class Constants {
     // Inventory Constants
     public static final int ITEMS_LENGTH = 3;
     public static final List<Inventory> INITIAL_INVENTORY = createInitialInventory();
-
-    // Combat Constants
-    public static final int UNARMED_DAMAGE = 5;
-    public static final int SWORD_DAMAGE = 10;
-    public static final int HAMMER_DAMAGE = 15;
 
     // Health Constants
     public static final int HEALTH_LENGTH = 4;

@@ -1,12 +1,14 @@
 package pt.upskill.projeto1.game;
 
 import pt.upskill.projeto1.gui.ImageMatrixGUI;
-import pt.upskill.projeto1.objects.hero.Hero;
+import pt.upskill.projeto1.objects.characters.Hero;
 import pt.upskill.projeto1.rogue.utils.Direction;
+import pt.upskill.projeto1.rogue.utils.GameplayState;
 
 import java.awt.event.KeyEvent;
 
 public class Engine {
+    private final GameManager gameManager = GameManager.getInstance();
     private final RoomManager roomManager = RoomManager.getInstance();
     private final StatusManager statusManager = StatusManager.getInstance();
     private final ImageMatrixGUI GUI = ImageMatrixGUI.getInstance();
@@ -19,6 +21,16 @@ public class Engine {
         GUI.go();
 
         while (true){
+            GameplayState currentState = gameManager.getGameplayState();
+
+            if (currentState == GameplayState.GAME_OVER) {
+                System.out.println("Game Over! Exiting game loop.");
+                roomManager.getCurrentRoom().removeGameObject(hero);
+                roomManager.getCurrentRoom().stopEnemies();
+                GUI.showMessage("GO","Game Over! Press R to restart or Q to quit.");
+                break;
+            }
+
             GUI.update();
         }
     }
