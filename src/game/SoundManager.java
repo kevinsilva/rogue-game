@@ -17,11 +17,10 @@ public class SoundManager {
             AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File(Constants.SOUND_FILEPATH + fileName));
             clip = AudioSystem.getClip();
             clip.open(audioInputStream);
+            playSound();
         } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
-            e.printStackTrace();
+            System.err.println("SoundManager: Could not load sound file: " + fileName);
         }
-
-        playSound();
     }
 
     public void playSound() {
